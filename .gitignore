@@ -37,15 +37,15 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-# Ignore everything in the root except the "Assets" directory.
+# Ignore everything in the root except the "Assets" directory, and ReadMe images
 /*
 !.gitignore
 ![Aa]ssets/
+!imgs/
 
 # Ignore everything in the "Assets" directory, except the "Scripts" and "Shaders"
 # and "themes" directories.
 [Aa]ssets/*
 ![Aa]ssets/Scripts/
 ![Aa]ssets/Shaders/
-/Assets/Shaders/SpriteGlower.mat
-/Assets/Shaders/SpriteGlower.mat.meta
+
