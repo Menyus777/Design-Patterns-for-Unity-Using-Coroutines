@@ -12,7 +12,7 @@
 <br>
 <br>
 
-![Alt text](imgs/BME_logo.jpg?raw=true "Bme logo")
+![BME logo](imgs/BME_logo.jpg?raw=true "BME logo")
 
 <br>
 
@@ -36,10 +36,14 @@
 - Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
 
 #### 4th Example:
-- The importance of caching yield instructions no more
+- The importance of caching yield instructions
+
 ```csharp
+    // Instantiating classes every frame or so is a Bad practice
     yield return new WaitForSeconds(1.0f);
+    // Good practice would be to cache the yield instruction
+    yield return 1_SecondWaitForSeconds;
 ```
-and<br>
-GC Spikes!
+By caching the yield instructions you can avoid GC Spikes
+![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
