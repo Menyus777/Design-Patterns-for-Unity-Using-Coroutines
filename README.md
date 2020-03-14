@@ -36,14 +36,6 @@
 - Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
 
 #### 4th Example:
-- The importance of caching yield instructions
-
-```csharp
-    // Instantiating classes every frame or so is a Bad practice
-    yield return new WaitForSeconds(1.0f);
-    // Good practice would be to cache the yield instruction
-    yield return 1_SecondWaitForSeconds;
-```
-By caching the yield instructions you can avoid GC Spikes
+- The importance of caching yield instructions. By caching the yield instructions you can avoid GC Spikes like this
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
