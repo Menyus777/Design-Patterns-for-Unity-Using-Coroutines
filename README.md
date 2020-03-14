@@ -14,7 +14,6 @@
 
 ![BME logo](imgs/BME_logo.jpg?raw=true "BME logo")
 
-<br>
 
 ---
 
