@@ -36,4 +36,8 @@
 - Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
 
 #### 4th Example:
-- The importance of caching yield instructions no more yield return new WaitForSeconds(1.0f); and GC Spikes!
+- The importance of caching yield instructions no more `yield return new WaitForSeconds(1.0f);` and GC Spikes!
+
+```csharp
+    yield return new WaitForSeconds(1.0f);
+```
