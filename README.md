@@ -14,6 +14,8 @@
 
 ![Alt text](imgs/BME_logo.jpg?raw=true "Bme logo")
 
+<br>
+
 ---
 
 <br>
