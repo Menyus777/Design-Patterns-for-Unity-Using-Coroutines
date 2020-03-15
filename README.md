@@ -38,3 +38,6 @@
 - The importance of caching yield instructions. By caching the yield instructions you can avoid GC Spikes like this
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
+
+## <p align="center">Coroutines - Design patterns</p>
+
