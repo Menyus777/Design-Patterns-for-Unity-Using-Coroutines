@@ -31,6 +31,7 @@ public class Accessor : MonoBehaviour
             Debug.Log("Need data from the Main Thread in frame " + Time.frameCount);
             CoroutineThreads[coroutineThread.ID] = true;
 
+            coroutineThread.Operations.Invoke();
         }
     }
 }

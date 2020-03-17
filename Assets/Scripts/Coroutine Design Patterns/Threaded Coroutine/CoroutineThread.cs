@@ -17,14 +17,27 @@ public class CoroutineThread : IEnumerator
     /// </summary>
     public bool IsFinished { get; } = false;
 
-
-    volatile bool RequestMainThread = false;
+    bool _requestMainThread;
 
     public void Work()
     {
         Debug.Log("<color=yellow>Run method Thread ID:</color> " + Thread.CurrentThread.ManagedThreadId);
-        Thread.Sleep(5000);
-        RequestMainThread = true;
+        Thread.Sleep(3000);
+        _requestMainThread = true;
+        Operations += WriteTestGameObjectPosition;
+        Operations += WriteTestGameObjectRotation;
+    }
+
+    public Action Operations;
+
+    public void WriteTestGameObjectPosition()
+    {
+        GameObject.Find("Test").transform.position = new Vector3(2.0f,5.0f,3.0f);
+    }
+
+    public void WriteTestGameObjectRotation()
+    {
+        GameObject.Find("Test").transform.eulerAngles = new Vector3(15.0f, 70.0f, 50.0f);
     }
 
     #region Yielder
@@ -32,14 +45,14 @@ public class CoroutineThread : IEnumerator
 
     public bool MoveNext()
     {
-        if (!RequestMainThread)
+        if (_requestMainThread)
         {
-            return true;
+            _requestMainThread = false;
+            return false;
         }
         else
         {
-            RequestMainThread = false;
-            return false;
+            return true;
         }
     }
 
