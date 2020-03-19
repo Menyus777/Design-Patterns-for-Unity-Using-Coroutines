@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class WaitUntilInRange : IEnumerator
 {
-    // Transform is a class thus it is passed by referency so we can cache it easily here for some performance boost
+    // Transform is a class thus it is passed by reference so we can cache it easily here for some performance boost
     Transform _observer;
     Transform _observed;
 
