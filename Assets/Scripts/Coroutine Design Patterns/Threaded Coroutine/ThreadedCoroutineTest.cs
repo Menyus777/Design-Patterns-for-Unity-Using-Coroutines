@@ -20,10 +20,4 @@ public class ThreadedCoroutineTest : MonoBehaviour
         var threadedCoroutine5 = new ExampleThreadedCoroutine();
         _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine1);
     }
-
-    void Update()
-    {
-        var threadedCoroutine = new ExampleThreadedCoroutine();
-        _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine);
-    }
 }
