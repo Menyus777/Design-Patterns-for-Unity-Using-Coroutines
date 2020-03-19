@@ -16,7 +16,7 @@ public class ExampleThreadedCoroutine : ThreadedCoroutine
         Debug.Log("<color=yellow>WorkOnUnityThread method Thread ID:</color> " + Thread.CurrentThread.ManagedThreadId);
 
         // We then request a gameObject called "Fred" (its a cube) and multiply its position value on the Unity Thread
-        Fred = GameObject.Find("Fredv2");
+        Fred = GameObject.Find("Fred");
         Fred.transform.position *= 2;
         EditorApplication.ExecuteMenuItem("Edit/Play");
         // Yield work to the coroutine thread
