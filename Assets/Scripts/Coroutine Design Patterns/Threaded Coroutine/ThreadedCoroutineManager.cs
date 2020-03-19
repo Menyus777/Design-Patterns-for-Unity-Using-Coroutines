@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
-/// 
+/// Manages <see cref="ThreadedCoroutine"/><color=#00FF00>s</color> 
 /// </summary>
 public class ThreadedCoroutineManager : MonoBehaviour
 {
     static readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     /// <summary>
-    /// Starts a Coroutine on the threadpool or on a new thread
+    /// Starts a <see cref="ThreadedCoroutine"/> on the threadpool or on a new thread
     /// </summary>
     /// <param name="coroutineThread">The <see cref="ThreadedCoroutine"/> to start</param>
     /// <param name="isLongRunning">Set this to true if your coroutine will be a long running one in order to avoid filling up the threadpool</param>

@@ -35,12 +35,14 @@ public class ExampleThreadedCoroutine : ThreadedCoroutine
         Thread.Sleep(3500);
 
         Debug.Log("<color=#00FF00>Requesting main thread...</color> " + Thread.CurrentThread.ManagedThreadId);
-        RequestMainThread(cancellationToken); // Use request main thread to pause execution of the current thread and yield control to Unitys Thread
+        // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
+        RequestMainThread(cancellationToken);
 
         // After that another heavy workload takes place
         Thread.Sleep(2000);
 
-        RequestMainThread(cancellationToken); // Use request main thread to pause execution of the current thread and yield control to Unitys Thread
+        // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
+        RequestMainThread(cancellationToken);
 
         Debug.Log("<color=#00FF00>Finished execution of thread</color>" + Thread.CurrentThread.ManagedThreadId);
         Finish();

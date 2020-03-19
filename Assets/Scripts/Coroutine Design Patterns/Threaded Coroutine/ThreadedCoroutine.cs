@@ -41,7 +41,8 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     IEnumerator IStartThreadedCoroutine.StartWithCoroutineThread(bool isLongRunning, CancellationToken cancellationToken)
     {
         if (isLongRunning)
-            _task = Task.Factory.StartNew(() => WorkOnCoroutineThread(cancellationToken), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            _task = Task.Factory.StartNew(() => WorkOnCoroutineThread(cancellationToken),
+                cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         else
             _task = Task.Run(() => WorkOnCoroutineThread(cancellationToken), cancellationToken);
 
@@ -79,10 +80,8 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
         _isFinished = true;
     }
 
-    /// Define here what type of delegates you would like to call after requesting Unitys Thread
     protected abstract IEnumerator WorkOnUnityThread();
 
-    /// Do a specific work here on a seperate thread then, configure some delegates and use <see cref="RequestMainThread()"/> method to execute them on Unitys main thread
     protected abstract void WorkOnCoroutineThread(CancellationToken cancellationToken);
 
     #region Yielder - Controls synchornization with the engine loop
