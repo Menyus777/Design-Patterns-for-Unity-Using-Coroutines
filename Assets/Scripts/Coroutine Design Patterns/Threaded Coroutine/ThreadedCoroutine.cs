@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -16,7 +15,6 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     /// </summary>
     /// <remarks>Only returns true when both the task and the coroutine is completed</remarks>
     public bool IsFinished { get { return _isFinished && _task.IsCompleted; } }
-
     volatile bool _isFinished = false;
 
     /// <summary>
@@ -35,17 +33,34 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     protected Task _task;
 
     /// <summary>
-    /// The <see cref="WaitHandle"/> for the <see cref="ThreadedCoroutine"/>
+    /// The <see cref="WaitHandle"/> for the <see cref="ThreadedCoroutine"/> instance
     /// </summary>
-    private ManualResetEventSlim _taskManualResetEvent = new ManualResetEventSlim(false);
+    private ManualResetEventSlim _taskManualResetEvent;
 
     IEnumerator IStartThreadedCoroutine.StartWithUnityThread(bool isLongRunning, CancellationToken cancellationToken)
     {
+        _taskManualResetEvent = new ManualResetEventSlim(true);
+        if (isLongRunning)
+            _task = Task.Factory.StartNew(() =>
+            {
+                _taskManualResetEvent.Wait(cancellationToken);
+                WorkOnCoroutineThread(cancellationToken);
+            },cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        else
+            _task = Task.Run(() => 
+            { 
+                _taskManualResetEvent.Wait(cancellationToken);
+                WorkOnCoroutineThread(cancellationToken);
+            }, cancellationToken);
+
         yield return WorkOnUnityThread();
+
+        CleanUp();
     }
 
     IEnumerator IStartThreadedCoroutine.StartWithCoroutineThread(bool isLongRunning, CancellationToken cancellationToken)
     {
+        _taskManualResetEvent = new ManualResetEventSlim(false);
         if (isLongRunning)
             _task = Task.Factory.StartNew(() => WorkOnCoroutineThread(cancellationToken),
                 cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -53,12 +68,10 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
             _task = Task.Run(() => WorkOnCoroutineThread(cancellationToken), cancellationToken);
 
         yield return this;
-
-        Debug.Log("<color=orange>After first yield</color> " + Thread.CurrentThread.ManagedThreadId);
-        /// Continues execution on Unitys main thread when a <see cref="RequestMainThread()"/> method is called
+        
         yield return WorkOnUnityThread();
 
-        Debug.Log("<color=#00FF00>Finished execution of the coroutine</color>");
+        Debug.Log("<color=yellow>Finished execution of the coroutine</color>");
         Debug.Log("Task IsCompleted: " + _task.IsCompleted);
         Debug.Log("ThreadCoroutine" + _isFinished);
         CleanUp();
@@ -87,7 +100,10 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     /// Yields execution of the underlying coroutine back to Unitys Main Thread, then unblocks the underlying <see cref="Task"/>. 
     /// After that execution continues on the <see cref="WorkOnCoroutineThread(CancellationToken)"/> method
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// A Yield isntruction that halts the execution of the underlying coroutine till a 
+    /// <see cref="RequestUnitysMainThread(CancellationToken)"/> call happens on underlying Tasks thread
+    /// </returns>
     protected IEnumerator RequestThreadedCoroutineThread()
     {
         _taskManualResetEvent.Set();
@@ -104,21 +120,32 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
 
     /// <summary>
     /// The underlying coroutine running on Unitys Main Thread. Put here code that needs APIs from the Main thread.
-    /// <para>For example: </para>
-    /// <list type="table">
-    /// <item><term>Search</term><description><see cref="GameObject.Find(string)"/></description></item>
-    /// <item><term>Translation</term><description><see cref="Transform.Translate(Vector3)"/></description></item>
-    /// <item><term>Instantiation</term><description><see cref="UnityEngine.Object.Instantiate{T}(T)"/></description></item>
-    /// </list>
-    /// </summary>
+    /// <para>For example: </para><list type="table">
+    /// <item><term>Search</term> <description><see cref="GameObject.Find(string)"/></description></item>
+    /// <item><term>Translation</term> <description><see cref="Transform.Translate(Vector3)"/></description></item>
+    /// <item><term>Instantiation</term> <description><see cref="UnityEngine.Object.Instantiate{T}(T)"/> etc..</description></item>
+    /// </list></summary>
     /// <returns>A yield instruction about the further execution of the coroutine</returns>
     protected abstract IEnumerator WorkOnUnityThread();
 
+    /// <summary>
+    /// The underlying Task running on a ThreadPool or on a separate Thread. Put here code that should not run on 
+    /// Unitys Main Thread.
+    /// <para>For example: </para><list type="bullet">
+    /// <item>Time consuming calculations</item>
+    /// <item>Calculations that results do not need in every frame</item>
+    /// <item>Operations that communicate with other services/applications, 
+    /// and you need a synchronization mechansim with them and Unity</item>
+    /// </list></summary>
+    /// <param name="cancellationToken"></param>
     protected abstract void WorkOnCoroutineThread(CancellationToken cancellationToken);
 
     #region Yielder - Controls synchornization with the engine loop
 
-    public bool MoveNext()
+    /// <summary>
+    /// Tells whether the coroutine should continue execution or not
+    /// </summary>
+    bool IEnumerator.MoveNext()
     {
         if (_requestMainThread)
         {
@@ -135,7 +162,7 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
         }
     }
 
-    void IEnumerator.Reset() { throw new NotSupportedException("Threaded Coroutines does not support Reset operation!"); }
+    void IEnumerator.Reset() { throw new NotSupportedException("Threaded Coroutines does not support Reset!"); }
     object IEnumerator.Current { get { return null; } }
 
     #endregion

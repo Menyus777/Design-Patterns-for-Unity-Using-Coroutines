@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
-/// Manages <see cref="ThreadedCoroutine"/><color=#00FF00>s</color> 
+/// Manages <see cref="ThreadedCoroutine"/>s
 /// </summary>
 public class ThreadedCoroutineManager : MonoBehaviour
 {
@@ -24,11 +24,13 @@ public class ThreadedCoroutineManager : MonoBehaviour
     /// </remarks>
     public void StartCoroutineThread(ThreadedCoroutine coroutineThread, bool isLongRunning = false, bool threadStarts = false)
     {
-        threadStarts = true;
         // Making a bit harder for your programmers to call ThreadedCoroutine.Start() directly, you can remove this if you are familiar with this pattern
         StartCoroutine(((IStartThreadedCoroutine)coroutineThread).StartWithCoroutineThread(isLongRunning, _cancellationTokenSource.Token));
     }
 
+    /// <summary>
+    /// Cancelling the running tasks and disposing the unmanaged resources
+    /// </summary>
     void OnDestroy()
     {
         _cancellationTokenSource.Cancel();

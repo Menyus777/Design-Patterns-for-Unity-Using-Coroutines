@@ -1,24 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Threading;
-using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 
-public class ExampleThreadedCoroutine : ThreadedCoroutine
+public class CoroutineStartsFirstThreadedCoroutineExample : ThreadedCoroutine
 {
     GameObject Fred;
 
     protected override IEnumerator WorkOnUnityThread()
     {
+
+        Fred = GameObject.Find("Fred");
+        Fred.transform.localScale = Fred.transform.localScale * 1.5f;
+
+        yield return RequestThreadedCoroutineThread();
+
         // Doing work on Unitys Main Thread
         Debug.Log("<color=yellow>WorkOnUnityThread method Thread ID:</color> " + Thread.CurrentThread.ManagedThreadId);
 
-        // We then request a gameObject called "Fred" (its a cube) and multiply its position value on the Unity Thread
-        Fred = GameObject.Find("Fred");
+        // Multiplying Fred position value on the Unity Thread
         Fred.transform.position *= 2;
-        EditorApplication.ExecuteMenuItem("Edit/Play");
+
         // Yield work to the coroutine thread
         yield return RequestThreadedCoroutineThread();
 
