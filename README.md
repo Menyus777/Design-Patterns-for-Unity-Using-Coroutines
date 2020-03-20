@@ -20,9 +20,7 @@
 <br>
 <br>
 
-## <p align="center">Coroutines - Custom Yield Instruction Examples</p>
-
-### Coroutines:
+## <p align="center">Coroutines</p>
 
 **What are Coroutines?**<br>
 In general, Coroutines are computer program components that generalize subroutines for non-preemptive(cooperative) multitasking, by allowing execution to be suspended and resumed.<br>
@@ -42,7 +40,7 @@ void IEnumerator()
     Debug.Log("Not yet finished example...");
 }
 ````
-
+## <p align="center">Coroutines - Custom Yield Instruction Examples</p>
 
 #### 1st Example:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
