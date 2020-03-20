@@ -2,6 +2,9 @@
 
 <br>
 <br>
+
+### <p align="center"><font color="red">Please Note that this is a work in progress repository!</font></p>
+
 <br>
 <br>
 
@@ -28,18 +31,36 @@ In general, Coroutines are computer program components that generalize subroutin
 In Unity, Coroutines are a type of functions which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
 **How they are implemented in Unity?**<br>
-A good way of implementing coroutines in .Net is by using iterators. Unity also used this concept when they implemented their coroutines.<br>
+A good way of implementing coroutines in .Net is by using iterators.<br>
+Unity also used this concept when they implemented their own coroutines.<br>
 
-A coroutine `yield return` an `IEnumerator` interface, which will tell to Unitys Coroutine Scheduler when the execution should continue.
+A coroutine yields an `IEnumerator` interface, which will tell to Unitys Coroutine Scheduler when the execution shall continue.
 Let's see an example:
 ````cs
-void IEnumerator()
+public class CoroutineExample : Monobehaviour
 {
-    Debug.Log("Starting of coroutine...");
-    yield return 
-    Debug.Log("Not yet finished example...");
+    public bool IsReady = false;
+
+    void Start()
+    {
+        // Coroutines need to be started by Monobehaviour.StartCoroutine() method in order to behave like
+        // coroutines otherwise they are just plain methods
+        StartCoroutine(ExampleCoroutine());
+    }
+
+    void IEnumerator ExampleCoroutine()
+    {
+        Debug.Log("Starting of ExampleCoroutine...");
+        // WaitUntil is one of Unitys built in yield instruction
+        // https://docs.unity3d.com/ScriptReference/WaitUntil.html
+        yield return new WaitUntil(() => _isReady);
+        Debug.Log("The coroutine is ready to continue");
+    }
 }
 ````
+Let's inspect the above code snippet!<br>
+
+
 ## <p align="center">Coroutines - Custom Yield Instruction Examples</p>
 
 #### 1st Example:
@@ -59,7 +80,7 @@ void IEnumerator()
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
 
-## <p align="center">Coroutines - Design patterns</p>
+## <p align="center">Coroutines - Proposing Design patterns</p>
 <br>
 <br>
 
@@ -76,4 +97,5 @@ void IEnumerator()
 ---
 
 **Sources:<br>**
-https://en.wikipedia.org/wiki/Coroutine
+https://en.wikipedia.org/wiki/Coroutine<br>
+https://docs.unity3d.com/
