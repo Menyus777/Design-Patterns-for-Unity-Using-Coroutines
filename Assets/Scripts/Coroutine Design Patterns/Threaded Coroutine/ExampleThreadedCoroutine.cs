@@ -20,12 +20,12 @@ public class ExampleThreadedCoroutine : ThreadedCoroutine
         Fred.transform.position *= 2;
         EditorApplication.ExecuteMenuItem("Edit/Play");
         // Yield work to the coroutine thread
-        yield return RequestCoroutineThread();
+        yield return RequestThreadedCoroutineThread();
 
         // Now we change the gameobject color to blue indicating that we are finished with the process
         Fred.GetComponent<Renderer>().material.color = Color.green;
 
-        yield return RequestCoroutineThread();
+        yield return RequestThreadedCoroutineThread();
     }
 
     protected override void WorkOnCoroutineThread(CancellationToken cancellationToken)
@@ -36,13 +36,13 @@ public class ExampleThreadedCoroutine : ThreadedCoroutine
 
         Debug.Log("<color=#00FF00>Requesting main thread...</color> " + Thread.CurrentThread.ManagedThreadId);
         // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
-        RequestMainThread(cancellationToken);
+        RequestUnitysMainThread(cancellationToken);
 
         // After that another heavy workload takes place
         Thread.Sleep(2000);
 
         // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
-        RequestMainThread(cancellationToken);
+        RequestUnitysMainThread(cancellationToken);
 
         Debug.Log("<color=#00FF00>Finished execution of thread</color>" + Thread.CurrentThread.ManagedThreadId);
         Finish();
