@@ -32,7 +32,7 @@ In Unity, Coroutines are a type of functions which can pause execution, save sta
 **How they are implemented in Unity?**<br>
 A good way of implementing coroutines in .Net is by using iterators. Unity also used this concept when they implemented their coroutines.<br>
 
-A coroutine `yield return` an `IEnumerator` interface, which will tell to Unitys Coroutine Scheduler when should the execution continue.
+A coroutine `yield return` an `IEnumerator` interface, which will tell to Unitys Coroutine Scheduler when the execution should continue.
 Let's see an example:
 ````cs
 void IEnumerator()
