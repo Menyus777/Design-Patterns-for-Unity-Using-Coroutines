@@ -24,8 +24,10 @@ public class ThreadedCoroutineManager : MonoBehaviour
     /// </remarks>
     public void StartCoroutineThread(ThreadedCoroutine coroutineThread, bool isLongRunning = false, bool threadStarts = false)
     {
-        // Making a bit harder for your programmers to call ThreadedCoroutine.Start() directly, you can remove this if you are familiar with this pattern
-        StartCoroutine(((IStartThreadedCoroutine)coroutineThread).StartWithCoroutineThread(isLongRunning, _cancellationTokenSource.Token));
+        if (threadStarts)      
+            StartCoroutine(((IStartThreadedCoroutine)coroutineThread).StartWithCoroutineThread(isLongRunning, _cancellationTokenSource.Token));
+        else
+            StartCoroutine(((IStartThreadedCoroutine)coroutineThread).StartWithUnityThread(isLongRunning, _cancellationTokenSource.Token));
     }
 
     /// <summary>

@@ -14,10 +14,10 @@ public class ThreadedCoroutineTest: MonoBehaviour
     void Start()
     {
         var threadedCoroutine1 = new ThreadStartsFirstThreadedCoroutineExample();
-        var threadedCoroutine2 = new ThreadStartsFirstThreadedCoroutineExample();
+        var threadedCoroutine2 = new CoroutineStartsFirstThreadedCoroutineExample();
         var threadedCoroutine3 = new ThreadStartsFirstThreadedCoroutineExample();
         var threadedCoroutine4 = new ThreadStartsFirstThreadedCoroutineExample();
         var threadedCoroutine5 = new ThreadStartsFirstThreadedCoroutineExample();
-        _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine1, threadStarts: true);
+        _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine2);
     }
 }

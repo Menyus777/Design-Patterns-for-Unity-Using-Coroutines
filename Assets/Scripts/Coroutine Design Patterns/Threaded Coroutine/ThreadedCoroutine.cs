@@ -14,8 +14,7 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     /// Indicated whether the <see cref="ThreadedCoroutine"/> finished executing
     /// </summary>
     /// <remarks>Only returns true when both the task and the coroutine is completed</remarks>
-    public bool IsFinished { get { return _isFinished && _task.IsCompleted; } }
-    volatile bool _isFinished = false;
+    public bool IsFinished { get { return _task.IsCompleted && _task.IsCompleted; } }
 
     /// <summary>
     /// Indicates if the <see cref="ThreadedCoroutine"/>s Thread is requesting a Unity main thread operation
@@ -35,46 +34,63 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     /// <summary>
     /// The <see cref="WaitHandle"/> for the <see cref="ThreadedCoroutine"/> instance
     /// </summary>
-    private ManualResetEventSlim _taskManualResetEvent;
+    private ManualResetEventSlim _taskManualResetEvent = new ManualResetEventSlim(false);
 
+    /// <summary>
+    /// Starts the <see cref="ThreadedCoroutine"/> and begins working on the underlying coroutine. 
+    /// Work starts in the <see cref="WorkOnUnityThread"/> method
+    /// </summary>
+    /// <param name="isLongRunning">A flag indicating whether the thread should start on a separate Thread or on the ThreadPool</param>
+    /// <param name="cancellationToken">A lightweight token that can cancel the execution of the underlying <see cref="Task"/></param>
     IEnumerator IStartThreadedCoroutine.StartWithUnityThread(bool isLongRunning, CancellationToken cancellationToken)
     {
-        _taskManualResetEvent = new ManualResetEventSlim(true);
         if (isLongRunning)
+        {
             _task = Task.Factory.StartNew(() =>
             {
                 _taskManualResetEvent.Wait(cancellationToken);
+                _taskManualResetEvent.Reset();
                 WorkOnCoroutineThread(cancellationToken);
-            },cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                CleanUp();
+            }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
         else
-            _task = Task.Run(() => 
-            { 
+        {
+            _task = Task.Run(() =>
+            {
                 _taskManualResetEvent.Wait(cancellationToken);
+                _taskManualResetEvent.Reset();
                 WorkOnCoroutineThread(cancellationToken);
+                CleanUp();
             }, cancellationToken);
+        } 
 
         yield return WorkOnUnityThread();
 
-        CleanUp();
+        // Unblocking the Tasks thread if the coroutine does not ends with RequestThreadedCoroutineThread
+        _taskManualResetEvent.Set();
     }
 
+    /// <summary>
+    /// Starts the <see cref="ThreadedCoroutine"/> and begins working on the underlying <see cref="Task"/>. 
+    /// Work starts in the <see cref="WorkOnCoroutineThread(CancellationToken)"/> method
+    /// </summary>
+    /// <param name="isLongRunning">A flag indicating whether the thread should start on a separate Thread or on the ThreadPool</param>
+    /// <param name="cancellationToken">A lightweight token that can cancel the execution of the underlying <see cref="Task"/></param>
     IEnumerator IStartThreadedCoroutine.StartWithCoroutineThread(bool isLongRunning, CancellationToken cancellationToken)
     {
-        _taskManualResetEvent = new ManualResetEventSlim(false);
         if (isLongRunning)
-            _task = Task.Factory.StartNew(() => WorkOnCoroutineThread(cancellationToken),
+            _task = Task.Factory.StartNew(() => { WorkOnCoroutineThread(cancellationToken); CleanUp(); },
                 cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         else
-            _task = Task.Run(() => WorkOnCoroutineThread(cancellationToken), cancellationToken);
+            _task = Task.Run(() => { WorkOnCoroutineThread(cancellationToken); CleanUp(); }, cancellationToken);
 
         yield return this;
         
         yield return WorkOnUnityThread();
 
-        Debug.Log("<color=yellow>Finished execution of the coroutine</color>");
-        Debug.Log("Task IsCompleted: " + _task.IsCompleted);
-        Debug.Log("ThreadCoroutine" + _isFinished);
-        CleanUp();
+        // Unblocking the Tasks thread if the coroutine does not ends with RequestThreadedCoroutineThread
+        _taskManualResetEvent.Set();
     }
 
     /// <summary>
@@ -94,6 +110,7 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     {
         _requestMainThread = true;
         _taskManualResetEvent.Wait(cancellationToken);
+        _taskManualResetEvent.Reset();
     }
 
     /// <summary>
@@ -108,14 +125,6 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     {
         _taskManualResetEvent.Set();
         yield return this;
-    }
-
-    /// <summary>
-    /// Indicates that the <see cref="ThreadedCoroutine"/> finished execution
-    /// </summary>
-    protected void Finish()
-    {
-        _isFinished = true;
     }
 
     /// <summary>
@@ -152,7 +161,7 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
             _requestMainThread = false;
             return false;
         }
-        else if (_isFinished)
+        else if (_task.IsCompleted)
         {
             return false;
         }
