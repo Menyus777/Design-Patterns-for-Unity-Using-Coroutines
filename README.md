@@ -30,7 +30,7 @@ In general, Coroutines are computer program components that generalize subroutin
 In Unity, Coroutines are a type of functions which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
 **How they are implemented in Unity?**<br>
-A good way of implementing coroutines in .Net is by using iterators. Unity also used this concept when they implemented they coroutines.<br>
+A good way of implementing coroutines in .Net is by using iterators. Unity also used this concept when they implemented their coroutines.<br>
 
 A coroutine `yield return` an `IEnumerator` interface, which will tell to Unitys Coroutine Scheduler when should the execution continue.
 Let's see an example:
