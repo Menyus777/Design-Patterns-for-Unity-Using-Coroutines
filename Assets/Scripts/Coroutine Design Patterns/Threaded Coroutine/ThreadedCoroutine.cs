@@ -138,8 +138,7 @@ public abstract class ThreadedCoroutine : IEnumerator, IStartThreadedCoroutine
     protected abstract IEnumerator WorkOnUnityThread();
 
     /// <summary>
-    /// The underlying Task running on a ThreadPool or on a separate Thread. Put here code that should not run on 
-    /// Unitys Main Thread.
+    /// The underlying Task running on a ThreadPool or on a separate Thread. Put here code that should not run on Unitys Main Thread.
     /// <para>For example: </para><list type="bullet">
     /// <item>Time consuming calculations</item>
     /// <item>Calculations that results do not need in every frame</item>
