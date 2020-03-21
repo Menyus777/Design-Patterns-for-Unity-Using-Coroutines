@@ -40,7 +40,7 @@ public class CoroutineStartsFirstThreadedCoroutineExample : ThreadedCoroutine
 
         Debug.Log("Sleeping for 4000 miliseconds");
         // Emulating some hardwork on the Coroutines thread at start.
-        //Thread.Sleep(4000);
+        Thread.Sleep(4000);
 
         Debug.Log("Passing the execution to the coroutine");
         // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
@@ -48,7 +48,7 @@ public class CoroutineStartsFirstThreadedCoroutineExample : ThreadedCoroutine
 
         Debug.Log("SLeeping for 4500 miliseconds");
         // After that another heavy workload takes place
-        //Thread.Sleep(4500);
+        Thread.Sleep(4500);
 
         Debug.Log("Passing the execution to the coroutine 2nd time");
         // Use request main thread to pause execution of the current thread and yield control to Unitys Main Thread
