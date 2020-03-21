@@ -39,6 +39,7 @@ sysinfo.txt
 
 # Ignore everything in the root except the "Assets" directory, and ReadMe images
 /*
+!LICENSE.md
 !.gitignore
 ![Aa]ssets/
 !imgs/
