@@ -22,28 +22,23 @@
 
 # <p align="center">Summary</p>
 
-
-<details open>
-    <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
-    &emsp; ⬥ <a href="#about-coroutines">About Coroutines</a><br>
-    &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-    &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
-</details>
-
 <dl>
     <details open>
         <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
         <dd>
-        <details open>
-            <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
-            &emsp; ⬥ <a href="#about-coroutines">About Coroutines</a><br>
-            &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-            &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
-        </details>
+            <details open>
+                <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
+                &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+                &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+            </details>
         </dd>
-    </details>
-  <dt>Milk</dt>
-  <dd>White cold drink</dd>
+        <dd>
+           <details open>
+                <summary><a href="#custom-yield-instruction-examples"><b>Custom Yield Instruction Examples</b></a></summary>
+                &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+                &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+            </details>
+        </dd>
 </dl>
 
 <br>
@@ -88,7 +83,7 @@ public class CoroutineExample : Monobehaviour
 Let's inspect the above code snippet!<br>
 
 
-## <p align="center">Coroutines - Custom Yield Instruction Examples</p>
+## <p align="center">Custom Yield Instruction Examples</p>
 
 #### 1st Example:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
