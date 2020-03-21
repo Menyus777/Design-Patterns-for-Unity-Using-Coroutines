@@ -1,6 +1,6 @@
 **MIT License**
 
-**Copyright © 2020 RedFox Interactive - Bence Menyhárt**
+**Copyright © 2020 Bence Menyhárt**
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
