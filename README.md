@@ -24,7 +24,7 @@
 
 <details open>
 <summary>[Coroutines](#coroutines)</summary>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>test 1<br>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>[Coroutines](#coroutines)<br>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>test 2<br>
 </details>
 
