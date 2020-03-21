@@ -28,15 +28,15 @@
         <dd>
             <details open>
                 <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
-                &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-                &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+                &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+                &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
             </details>
         </dd>
         <dd>
            <details open>
-                <summary><a href="#custom-yield-instruction-examples"><b>Custom Yield Instruction Examples</b></a></summary>
-                &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-                &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+                <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
+                &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+                &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
             </details>
         </dd>
 </dl>
@@ -83,26 +83,28 @@ public class CoroutineExample : Monobehaviour
 Let's inspect the above code snippet!<br>
 
 
-## <p align="center">Custom Yield Instruction Examples</p>
+## <p align="center">Understanding Yield Instructions</p>
 
-#### 1st Example:
+#### Writing Yield Instructions:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
 - Comparison between IEnumerator interface and Unitys CustomYieldIntructions IEnumerator interface wrapper class.<br>
 - Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
-- The importance of caching yield instructions no more GC Spikes!
 
-#### 2nd Example:
+#### Writing an advanced Yield Instruction:
 - Writing a custom advanced yield instructions using cached transforms
+
+#### The importance of caching Yield Instructions:
+- The importance of caching yield instructions. Say not to GC Spikes like this!<br>
+
+![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
+
 
 #### 3rd Example:
 - Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
 
-#### 4th Example:
-- The importance of caching yield instructions. By caching the yield instructions you can avoid GC Spikes like this
-![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
+<br>
 
-
-## <p align="center">Coroutines - Proposing Design patterns</p>
+## <p align="center">Proposing Design patterns</p>
 <br>
 <br>
 
