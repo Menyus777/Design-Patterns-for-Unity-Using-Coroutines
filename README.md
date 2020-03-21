@@ -22,28 +22,13 @@
 
 # <p align="center">Summary</p>
 
-<!-- <details open>
-<summary>
-<a href=#coroutines">
-Coroutines</a>
-</summary>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a>[You can use numbers for reference-style link definitions][1]</a><br>
-</details> -->
 
 <details open>
-    <summary>Coroutines</summary>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬥ <a href="#their-implementation-in-unity">Their implementation in Unity</a>
+    <summary><a href="#what-are-coroutines"><big><b>Coroutines</b></big></a></summary>
+    &emsp; ⬥ <a href="#about-coroutines">About Coroutines</a><br>
+    &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+    &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
 </details>
-
-<!-- <details open>
-<summary>
-
- [link text itself](http://www.reddit.com)
-</summary>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a>[You can use numbers for reference-style link definitions][1]</a><br>
-</details> -->
-
 
 <br>
 
@@ -56,7 +41,7 @@ In general, Coroutines are computer program components that generalize subroutin
 
 In Unity, Coroutines are a type of functions which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
-#### Their implementation in Unity<br>
+#### Implementation of Coroutines in Unity<br>
 A good way of implementing coroutines in .Net is by using iterators.<br>
 Unity also used this concept when they implemented their own coroutines.<br>
 
