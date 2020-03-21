@@ -24,11 +24,27 @@
 
 
 <details open>
-    <summary><a href="#what-are-coroutines"><big><b>Coroutines</b></big></a></summary>
+    <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
     &emsp; ⬥ <a href="#about-coroutines">About Coroutines</a><br>
     &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
     &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
 </details>
+
+<dl>
+    <dt>
+    <details open>
+        <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
+    </details>
+    </dt>
+  <dd><details open>
+        <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
+        &emsp; ⬥ <a href="#about-coroutines">About Coroutines</a><br>
+        &emsp;&emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+        &emsp;&emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+    </details></dd>
+  <dt>Milk</dt>
+  <dd>White cold drink</dd>
+</dl>
 
 <br>
 
