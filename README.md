@@ -23,7 +23,7 @@
 # <p align="center">Summary</p>
 
 <dl>
-    <a href="#what-are-coroutines"><h2>&#8203;Coroutines</h2></a>
+    <h2><a href="#coroutines-1">Coroutines</a></h2>
     <dd>
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
