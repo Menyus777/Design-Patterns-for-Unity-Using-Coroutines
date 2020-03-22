@@ -23,20 +23,19 @@
 # <p align="center">Summary</p>
 
 <dl>
-    <details open>
-        <summary><a href="#what-are-coroutines"><b>Coroutines</b></a></summary>
-        <dd>
-            <details open>
-                <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
-                &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-                &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
-            </details>
-            <details open>
-                <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
-                &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-                &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
-            </details>
-        </dd>
+    <a href="#what-are-coroutines"><h2>Coroutines</h2></a>
+    <dd>
+        <details open>
+            <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
+            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+        </details>
+        <details open>
+            <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
+            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+        </details>
+    </dd>
 </dl>
 
 <br>
@@ -50,7 +49,7 @@ In general, Coroutines are computer program components that generalize subroutin
 
 In Unity, Coroutines are a type of methods which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
-<small><sup>[1]</sup> Cooperative multitasking, also known as non-preemptive multitasking, is a style of computer multitasking in which the operating system never initiates a context switch from a running process to another process. Instead, processes voluntarily yield control periodically or when idle or logically blocked.</small>
+<sub><sup>[1]</sup> Cooperative multitasking, also known as non-preemptive multitasking, is a style of computer multitasking in which the operating system never initiates a context switch from a running process to another process. Instead, processes voluntarily yield control periodically or when idle or logically blocked.</sub>
 
 #### Implementation of Coroutines in Unity<br>
 A good way of implementing coroutines in .Net is by using iterators.<br>
@@ -92,8 +91,8 @@ Now let's inspect the above code snippet a bit more in depth!<br>
 &emsp;**1.** MonoBehaviours `StartCoroutine()` method registers the coroutine into Unitys coroutine scheduler. After that the scheduler will periodically call (basically in every frame) IEnumerators `public bool MoveNext()` method.<sup>[2]</sup><br>
 
 
-<strong><i><sub><sup>[2]</sup> Note, that not all built-in Yield Instructions are implementing the `IEnumerator` interface (E.g.: `WaitForSeconds`, `WaitForEndOfFrame etc..`), some of them are pointing into Unitys Native code and we have no informations about their internal mechanism. Although they are still reacting correctly when you are calling `MoveNext()` on their yielded result.<br>
-E.g.: Let's inspect `WaitForEndOfFrame`</sup></i></strong>
+<i><sub><sup>[2]</sup> Note, that not all built-in Yield Instructions are implementing the `IEnumerator` interface (E.g.: `WaitForSeconds`, `WaitForEndOfFrame etc..`), some of them are pointing into Unitys Native code and we have no informations about their internal mechanism. Although they are still reacting correctly when you are calling `MoveNext()` on their yielded result.<br>
+E.g.: Let's inspect `WaitForEndOfFrame`</sub></i>
 
 
 ## <p align="center">Understanding Yield Instructions</p>
