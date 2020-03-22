@@ -3,7 +3,7 @@
 <br>
 <br>
 
-### <p align="center"><mark>Please Note that this is a work in progress repository!</mark></p>
+### <p align="center">Please Note that this is a work in progress repository!</p>
 
 <br>
 <br>
@@ -23,7 +23,7 @@
 # <p align="center">Summary</p>
 
 <dl>
-    <a href="#what-are-coroutines"><h2>Coroutines</h2></a>
+    <a href="#what-are-coroutines"><h2>&#8203;Coroutines</h2></a>
     <dd>
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
