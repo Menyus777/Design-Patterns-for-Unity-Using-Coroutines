@@ -96,8 +96,8 @@ Now let's inspect the above code snippet a bit more in depth!
 
 &emsp;**1.** MonoBehaviours `StartCoroutine()` method registers the coroutine into Unitys coroutine scheduler. After that the scheduler will periodically ask (basically in every frame)
 the yield instruction if it is done with waiting or not.<br>
-<sub><i>(Assuming you yielded on a YieldInstruction, not just returned a value or let the coroutine finish in that frame.<br>
-A simple `yield return <object>;` means you yield the execution for one frame)</i>.</sub><br>
+<sub><i>(Assuming you yielded on a YieldInstruction, not just returned a value or let the coroutine finish in that frame.</sub><br>
+<sup>Also a simple `yield return <object>;` means you yielded the execution for one frame.)</i>.</sup><br>
 
 There are two types of Yield Instructions in Unity:
 
@@ -106,20 +106,51 @@ There are two types of Yield Instructions in Unity:
 
 We will only speak about the first type of Yield Instructions since we don't have insight into the second type. You can learn how to write your own Yield Instruction in the [Writing Yield Instructions](#writing-yield-instructions) section.
 
-When you start your iterator method aka your coroutine with `StartCoroutine(myCoroutine());` Unity will start executing it immediately and continues executing it till the first yield statement, unlike when you just simply call an iterator method like this.
+When you start your iterator method aka your coroutine with `StartCoroutine(myCoroutine())` Unity will start executing it immediately and continues execution till the first `yield` statement, unlike when you just simply call an iterator method like this
 ```c#
 IEnumerator myEnumerator = myCoroutine();
 ```
-So a C# equivalent of `StartCoroutine()` would be this
+in the above case the execution of the method won't start with the `()` operator, you need to call `myEnumerator.MoveNext()` to start the execution of the iterator method till the first `yield` statement.
+
+So a C# equivalent of `StartCoroutine()` would be something like this
 ```c#
 IEnumerator myEnumerator = myCoroutine();
 myEnumerator.MoveNext();
 ```
+ Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield me the control back at the next `yield` statement or at the end of the method.
 
+&emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`.<br>
+Let's inspect `WaitUntil` implementation<sup>[4]</sup>:
+```C#
+// Unity C# reference source
+// Copyright (c) Unity Technologies. For terms of use, see
+// https://unity3d.com/legal/licenses/Unity_Reference_Only_License
 
-<i><sub><sup>[2]</sup> There is a class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction.</sub></i>
+using System;
+
+namespace UnityEngine
+{
+    public sealed class WaitUntil : CustomYieldInstruction
+    {
+        Func<bool> m_Predicate;
+
+        public override bool keepWaiting { get { return !m_Predicate(); } }
+
+        public WaitUntil(Func<bool> predicate) { m_Predicate = predicate; }
+    }
+}
+```
+
+Looks like there is no sign of `MoveNext()` method, but in fact `WaitUntil`s parent class `CustomYieldInstruction` implements the `IEnumerator` interface and this is how its `MoveNext()` method looks like:<br>
+```C#
+public bool MoveNext() { return keepWaiting; }
+```
+It looks like it just passes the keepWaiting property. So in our case, the coroutine will be suspended till the `IsReady` Property evaluates to true.
+
+Note, that `keepWaiting` is returning `!m_Predicate()` rather then just `!m_Predicate()` because as we talked about this earlier `IEnumerator.MoveNext()` in this context means basically `Should_I_Still_Be_Suspended()` (or according to Unity `keepWaiting`) so just returning our `IsReady` boolean default false value would let the coroutine proceed with it's execution in the next frame rather then waiting for it to become true.
+
 <details>
-    <summary><i><sub><sup>[2]</sup> There is a class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. (Click on the arrow to view the class)</sub></i></summary>
+    <summary><i><sub><sup>[2]</sup> There is an abstract class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. Because of this class also introduces a sometimes useless bool, and prevents inheriting another class we will rather just simply implement the `IEnumerator` interface. (Click on the arrow to view the class implementation [4])</sub></i></summary>
 
 ```c#
 // Unity C# reference source
@@ -152,10 +183,17 @@ namespace UnityEngine
 ```
 </details>
 <br>
-<i><sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. ALl of these` are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub></i>
+<i><sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub></i>
+<br>
+<br>
+<i><sub><sup>[4]</sup> Unitys C# code is Open Source since 2019 you can inspect it here: <a href="https://github.com/Unity-Technologies/UnityCsReference"> https://github.com/Unity-Technologies/UnityCsReference</a></sub></i>
 
 
 ## <p align="center">Understanding Yield Instructions</p>
+
+Before diving 
+
+#### Execution pipeline of Yield Instructions
 
 #### Writing Yield Instructions:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
