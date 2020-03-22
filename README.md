@@ -92,8 +92,8 @@ Now let's inspect the above code snippet a bit more in depth!<br>
 &emsp;**1.** MonoBehaviours `StartCoroutine()` method registers the coroutine into Unitys coroutine scheduler. After that the scheduler will periodically call (basically in every frame) IEnumerators `public bool MoveNext()` method.<sup>[2]</sup><br>
 
 
-<small><sup>[2]</sup> Note, that not all built-in Yield Instructions are implementing the `IEnumerator` interface (E.g.: `WaitForSeconds`, `WaitForEndOfFrame etc..`), some of them are pointing into Unitys Native code and we have no informations about their internal mechanism. Although they are still reacting correctly when you are calling `MoveNext()` on their yielded result.<br>
-E.g.: Let's inspect `WaitForEndOfFrame`</small>
+<sub><sup><sup>[2]</sup> Note, that not all built-in Yield Instructions are implementing the `IEnumerator` interface (E.g.: `WaitForSeconds`, `WaitForEndOfFrame etc..`), some of them are pointing into Unitys Native code and we have no informations about their internal mechanism. Although they are still reacting correctly when you are calling `MoveNext()` on their yielded result.<br>
+E.g.: Let's inspect `WaitForEndOfFrame`</sub></sup>
 
 
 ## <p align="center">Understanding Yield Instructions</p>
