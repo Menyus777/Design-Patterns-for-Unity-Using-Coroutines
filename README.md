@@ -24,10 +24,14 @@
 
 <h2><a href="#coroutines-1">Coroutines</a></h2>
 <dl>
-    <dt></dt>
     <dd>
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a><summary>
+            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+        </details>
+        <details open>
+            <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
             &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
             &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
         </details>
