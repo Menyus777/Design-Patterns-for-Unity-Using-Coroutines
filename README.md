@@ -22,8 +22,8 @@
 
 # <p align="center">Summary</p>
 
-<h2><a href="#coroutines-1">Coroutines</a></h2>
 <dl>
+    <h2><a href="#coroutines-1">Coroutines</a></h2>
     <dd>
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a><summary>
