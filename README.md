@@ -33,7 +33,10 @@
         <details open>
             <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
             &emsp; ⬥ <a href="#execution-pipeline-of-yield-instructions">Execution pipeline of Yield Instructions</a><br>
-            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a><br>
+            &emsp; ⬥ <a href="#writing-yield-instructions">Writing Yield Instructions</a><br>
+            &emsp; ⬥ <a href="#writing-an-advanced-yield-instruction">Writing an advanced Yield Instruction</a><br>
+            &emsp; ⬥ <a href="#the-importance-of-caching-yield-instructions">The importance of caching Yield Instructions</a><br>
+            &emsp; ⬥ <a href="#catching-the-return-value-of-a-coroutine">Catching the return value of a Coroutine</a><br>
         </details>
         <details open>
             <summary><a href="#design-patterns-using-coroutines"><b>Design patterns using Coroutines</b></a></summary>
@@ -149,7 +152,7 @@ It looks like it just passes the keepWaiting property. So in our case, the corou
 Note, that `keepWaiting` is returning `!m_Predicate()` rather then just `!m_Predicate()` because as we talked about this earlier `IEnumerator.MoveNext()` in this context means basically `Should_I_Still_Be_Suspended()` (or according to Unity `keepWaiting`) so just returning our `IsReady` boolean default false value would let the coroutine proceed with it's execution in the next frame rather then waiting for it to become true.
 
 <details open>
-    <summary><sub><sup>[2]</sup> There is an abstract class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. Because of this class also introduces a sometimes useless bool, and prevents inheriting another class we will rather just simply implement the `IEnumerator` interface. (Click on the arrow to view the class implementation [4])</sub></summary>
+    <summary><sub><sup>[2]</sup> There is an abstract class named <code>CustomYieldInstruction</code> which basically just implements the <code>IEnumerator</code> interface so you can derive from it and make a custom yield instruction. But, because of this class also introduces a sometimes useless bool property, and also prevents inheriting another class we will rather just simply stick to <code>IEnumerator</code> interface. (Click on the arrow to view the class implementation [4])</sub></summary>
 
 ```c#
 // Unity C# reference source
@@ -182,7 +185,7 @@ namespace UnityEngine
 ```
 </details>
 <br>
-<sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub>
+<sub><sup>[3]</sup> As of 2020 there are only three that inherits from <code>YieldInstruction</code>, namely <code>WaitForSeconds</code>, <code>WaitForEndOfFrame</code> and <code>WaitForFixedUpdate</code>. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub>
 <br>
 <br>
 <sub><sup>[4]</sup> Unitys C# code is Open Source since 2019 you can inspect it here: <a href="https://github.com/Unity-Technologies/UnityCsReference"> https://github.com/Unity-Technologies/UnityCsReference</a></sub>
@@ -194,18 +197,20 @@ namespace UnityEngine
 
 Before diving into deeper to Yield Instructions let's see when the evaluation of the different yield instructions happens. The following picture from the Unity Manual will help us understand it<sup>[5]</sup>:<br>
 
-![GC Spike](imgs/Yield-execution-pipeline.jpg?raw=true "GC Spike")
-As you can see coroutines are executed after all Fixed and normal Updates haven taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame.
+![Execution pipeline](imgs/Yield-execution-pipeline.jpg?raw=true "Execution pipeline")
+As you can see coroutines are executed after all Fixed and normal Updates haven taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame would happen.
 
-As you can see it is guaranteed that our coroutines will resume execution after all Updates have been finished, but it's important to note that we have no guarantee that the order of execution of our coroutines will stay the same on the cycle of our application. There are improtant to note things before diving into writing custom yield instructions or designing architectures.
+As you can see it is guaranteed that our coroutines will resume execution after all Updates have been finished, but it's important to note that we have no guarantee that the order of execution of our coroutines will stay the same on the life cycle of our application. These are important to note things before writing custom yield instructions or designing architectures based on coroutines.
 
 <sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
 #### Writing Yield Instructions:
 
-- Showing how to write custom yield instructions like WaitUntil<br>
+In this section we will write a custom yield instruction<br>
 
 As mentioned above it's easy to write a custom yield instruction, just implement the `IEnumerator` interface `MoveNext` method and `Current` property.
+You can write extremely complicated yield instructions just be sure to return an appropriate bool from your `MoveNext()` method. 
+
 This is how a custom WaitUntil looks like:
 ```c#
 using System;
@@ -219,17 +224,17 @@ public class CustomWaitUntil : IEnumerator
     /// <summary>
     /// The predicate that will be evaluated every frame
     /// </summary>
-    Func<bool> m_Predicate;
+    Func<bool> _predicate;
 
     // This is processed after Unity's coroutine scheduler executes the MoveNext() method
     public object Current { get { return null; } }
 
-    public CustomWaitUntil(Func<bool> predicate) { m_Predicate = predicate; }
+    public CustomWaitUntil(Func<bool> predicate) { _predicate = predicate; }
 
     // Comes from IEnumerator Interface, called by Unity in every frame after all Updates have been happened
     public bool MoveNext()
     {
-        return !m_Predicate();
+        return !_predicate();
     }
 
     // Comes from IEnumerator Interface, this is not processed by Unity
@@ -240,7 +245,7 @@ public class CustomWaitUntil : IEnumerator
 **Example:**
 Changes the cube color to red when using the built-in `WaitUntil` and changes the color to yellow when using our custom `WaitUntil`
 
-![](custom-yield-instruction-example.gif)
+![](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/custom-yield-instruction-example.gif)
 
 
 Open the corresponding example found in the project to test the code for yourself you can even compare it to Unitys built-in `WaitUntil`
@@ -277,3 +282,4 @@ Open the corresponding example found in the project to test the code for yoursel
 https://docs.unity3d.com/<sup></sup><br>
 https://en.wikipedia.org/wiki/Coroutine<sup>[1]</sup><br>
 https://en.wikipedia.org/wiki/Cooperative_multitasking<sup>[1]</sup><br>
+https://github.com/Unity-Technologies/UnityCsReference<sup>[4]</sup><br>
