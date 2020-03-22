@@ -240,7 +240,7 @@ public class CustomWaitUntil : IEnumerator
 **Example:**
 Changes the cube color to red when using the built-in `WaitUntil` and changes the color to yellow when using our custom `WaitUntil`
 
-![](custom-yield-instruction-example.gif)
+![Alt Text](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/custom-yield-instruction-example.gif)
 
 
 Open the corresponding example found in the project to test the code for yourself you can even compare it to Unitys built-in `WaitUntil`
