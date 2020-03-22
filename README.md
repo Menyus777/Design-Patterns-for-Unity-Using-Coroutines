@@ -62,7 +62,7 @@ Unity also used this concept when they implemented their own coroutines.<br>
 
 A coroutine yields an `IEnumerator` interface (this is the iterator), which will tell to Unitys Coroutine Scheduler when the execution shall continue.
 Let's see an example:
-````c#
+```c#
 public class CoroutineExample : Monobehaviour
 {
     public bool IsReady = false;
@@ -83,7 +83,7 @@ public class CoroutineExample : Monobehaviour
     /*5*/Debug.Log("The coroutine is ready to continue");
 /*6*/}
 }
-````
+```
 The above script does the following:<br>
 &emsp;**1.** Starts the coroutine<br>
 &emsp;**2.** Logs the <i>"Starting of ExampleCoroutine..."</i> string to Unitys console<br>
@@ -92,12 +92,67 @@ The above script does the following:<br>
 &emsp;**5.** Logs the <i>"The coroutine is ready to continue"</i> string to Unitys console<br>
 &emsp;**6.** The execution of the coroutine finishes.<br>
 
-Now let's inspect the above code snippet a bit more in depth!<br>
-&emsp;**1.** MonoBehaviours `StartCoroutine()` method registers the coroutine into Unitys coroutine scheduler. After that the scheduler will periodically call (basically in every frame) IEnumerators `public bool MoveNext()` method.<sup>[2]</sup><br>
+Now let's inspect the above code snippet a bit more in depth!
+
+&emsp;**1.** MonoBehaviours `StartCoroutine()` method registers the coroutine into Unitys coroutine scheduler. After that the scheduler will periodically ask (basically in every frame)
+the yield instruction if it is done with waiting or not.<br>
+<sub><i>(Assuming you yielded on a YieldInstruction, not just returned a value or let the coroutine finish in that frame.<br>
+A simple `yield return <object>;` means you yield the execution for one frame)</i>.</sub><br>
+
+There are two types of Yield Instructions in Unity:
+
+&emsp; <i>**i**</i>, &nbsp;Yield Instructions that implements the interface `IEnumerator`<sup>[2]</sup><br>
+&emsp; <i>**ii**</i>, Yield Instructions that inherits from the class named `YieldInstruction`<sup>[3]</sup>
+
+We will only speak about the first type of Yield Instructions since we don't have insight into the second type. You can learn how to write your own Yield Instruction in the [Writing Yield Instructions](#writing-yield-instructions) section.
+
+When you start your iterator method aka your coroutine with `StartCoroutine(myCoroutine());` Unity will start executing it immediately and continues executing it till the first yield statement, unlike when you just simply call an iterator method like this.
+```c#
+IEnumerator myEnumerator = myCoroutine();
+```
+So a C# equivalent of `StartCoroutine()` would be this
+```c#
+IEnumerator myEnumerator = myCoroutine();
+myEnumerator.MoveNext();
+```
 
 
-<i><sub><sup>[2]</sup> Note, that not all built-in Yield Instructions are implementing the `IEnumerator` interface (E.g.: `WaitForSeconds`, `WaitForEndOfFrame etc..`), some of them are pointing into Unitys Native code and we have no informations about their internal mechanism. Although they are still reacting correctly when you are calling `MoveNext()` on their yielded result.<br>
-E.g.: Let's inspect `WaitForEndOfFrame`</sub></i>
+<i><sub><sup>[2]</sup> There is a class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction.</sub></i>
+<details>
+    <summary><i><sub><sup>[2]</sup> There is a class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. (Click on the arrow to view the class)</sub></i></summary>
+
+```c#
+// Unity C# reference source
+// Copyright (c) Unity Technologies. For terms of use, see
+// https://unity3d.com/legal/licenses/Unity_Reference_Only_License
+
+using System.Collections;
+
+namespace UnityEngine
+{
+    public abstract class CustomYieldInstruction : IEnumerator
+    {
+        public abstract bool keepWaiting
+        {
+            get;
+        }
+
+        public object Current
+        {
+            get
+            {
+                return null;
+            }
+        }
+        public bool MoveNext() { return keepWaiting; }
+        public virtual void Reset() {}
+    }
+}
+}
+```
+</details>
+<br>
+<i><sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. ALl of these` are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub></i>
 
 
 ## <p align="center">Understanding Yield Instructions</p>
