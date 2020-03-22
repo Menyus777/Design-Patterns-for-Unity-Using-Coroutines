@@ -197,6 +197,8 @@ Before diving into deeper to Yield Instructions let's see when the evaluation of
 ![GC Spike](imgs/Yield-execution-pipeline.jpg?raw=true "GC Spike")
 As you can see coroutines are executed after all Fixed and normal Updates haven taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame.
 
+As you can see it is guaranteed that our coroutines will resume execution after all Updates have been finished, but it's important to note that we have no guarantee that the order of execution of our coroutines will stay the same on the cycle of our application. There are improtant to note things before diving into writing custom yield instructions or designing architectures.
+
 <sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
 #### Writing Yield Instructions:
@@ -233,6 +235,6 @@ As you can see coroutines are executed after all Fixed and normal Updates haven 
 ---
 
 **Sources:<br>**
-https://docs.unity3d.com/<br>
-https://en.wikipedia.org/wiki/Coroutine<small>[1]</small><br>
-https://en.wikipedia.org/wiki/Cooperative_multitasking<small>[1]</small><br>
+https://docs.unity3d.com/<sup></sup><br>
+https://en.wikipedia.org/wiki/Coroutine<sup>[1]</sup><br>
+https://en.wikipedia.org/wiki/Cooperative_multitasking<sup>[1]</sup><br>

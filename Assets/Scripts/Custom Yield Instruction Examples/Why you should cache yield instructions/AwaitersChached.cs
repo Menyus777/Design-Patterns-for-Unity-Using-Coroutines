@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// An efficient way to use Yield Instructions, by reusing the Yield Instruction whenever we can
+/// </summary>
 public class AwaitersChached : MonoBehaviour
 {
     WaitWhile waitWhile= new WaitWhile(() => false);
@@ -17,6 +19,7 @@ public class AwaitersChached : MonoBehaviour
     {
         while (true)
         {
+            // Only one instance of WaitWhile will be created and we will use that over the lifetime of our application
             yield return waitWhile;
         }
     }

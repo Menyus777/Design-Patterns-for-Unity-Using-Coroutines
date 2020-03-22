@@ -7,12 +7,15 @@ using Random = UnityEngine.Random;
 
 /// <summary>
 /// Callback is a an elegant way for quite a lot of problems, however it hurts readibility a little bit and 
-/// more importantly delegates indtroduce one more indirection which makes them a little slower then calling a
-/// regular method, however first measure then optimize method call optimalization is a micro optimalization
+/// more importantly delegates introduce one more indirection which might make them slower then calling a
+/// regular method, however first measure then optimize. Method call optimalization is a micro optimalization
 /// Solution: Dedicated coroutines for method calls
 /// </summary>
 public class CallBackExample : MonoBehaviour
 {
+    /// <summary>
+    /// Tick this in the editor to simulate a server request to get the cubes actual color
+    /// </summary>
     [SerializeField]
     bool GetColor = false;
 
@@ -20,14 +23,12 @@ public class CallBackExample : MonoBehaviour
     {
         if (GetColor)
         {
-            StartCoroutine(
-                CGetCubeColorFromServer(ChangeGameObjectColor)
-                );
+            StartCoroutine(CGetCubeColorFromServer(ChangeGameObjectColor));
             GetColor = false;
         }
     }
 
-    // Changes the GO color
+    // Changes the GameObjects color
     void ChangeGameObjectColor(Color color)
     {
         GetComponent<Renderer>().material.color = color;
@@ -42,7 +43,7 @@ public class CallBackExample : MonoBehaviour
         var colorTask = Task.Run(() => GetColorFromServer(rand));
         yield return new WaitUntil(() => colorTask.IsCompleted);
 
-        // Null conditional operator => ?.
+        // Null conditional operator => ?. only evaluates the method call if the left hand not evaluates to null
         callBackMethod?.Invoke(colorTask.Result);
     }
 

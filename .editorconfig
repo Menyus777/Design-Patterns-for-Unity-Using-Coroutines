@@ -1,0 +1,7 @@
+﻿[*.{cs,vb}]
+
+# IDE0040: Add accessibility modifiers
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:none
+
+# CS0649: Field 'WorkerGenerator.OriginalWorker' is never assigned to, and will always have its default value null
+dotnet_diagnostic.CS0649.severity = silent

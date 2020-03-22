@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The test script to emulate GC spikes when an unefficient yield instruction is used
+/// </summary>
 public class WorkerGenerator : MonoBehaviour
 {
     [SerializeField]
@@ -36,7 +38,7 @@ public class WorkerGenerator : MonoBehaviour
                 id++;
                 var gameObject = Instantiate(OriginalWorker, new Vector3(startPos.x - 0.5f - i * 2, startPos.y, startPos.z + 0.5f + j * 2), Quaternion.identity, parent);
                 gameObject.name = _WorkerNamingConvention + id;
-                if(!finish || i < 10)
+                if(!finish || i < 5)
                     yield return new WaitForSeconds(instantioationBreak);
             }
             if (!finish)
