@@ -192,7 +192,12 @@ namespace UnityEngine
 
 #### Execution pipeline of Yield Instructions
 
-Before diving into deeper to Yield Instructions let's see when the evaluation of the different yield instructions happens. The following picture will tell us 
+Before diving into deeper to Yield Instructions let's see when the evaluation of the different yield instructions happens. The following picture from the Unity Manual will help us understand it<sup>[5]</sup>:<br>
+
+![GC Spike](imgs/Yield-execution-pipeline.jpg?raw=true "GC Spike")
+As you can see coroutines are executed after all Fixed and normal Updates haven taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame.
+
+<sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
 #### Writing Yield Instructions:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
