@@ -28,17 +28,16 @@
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
             &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a><br>
         </details>
         <details open>
             <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
-            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+            &emsp; ⬥ <a href="#execution-pipeline-of-yield-instructions">Execution pipeline of Yield Instructions</a><br>
+            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a><br>
         </details>
         <details open>
-            <summary><a href="#understanding-yield-instructions"><b>Understanding Yield Instructions</b></a></summary>
-            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
-            &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a>
+            <summary><a href="#design-patterns-using-coroutines"><b>Design patterns using Coroutines</b></a></summary>
+            &emsp; ⬥ <a href="#threaded-coroutine">Threaded Coroutine</a><br>
         </details>
     </dd>
 </dl>
@@ -71,17 +70,17 @@ public class CoroutineExample : Monobehaviour
     {
         // Coroutines need to be started by Monobehaviour.StartCoroutine() method in order to behave like
         // coroutines otherwise they are just plain iterator methods
-    /*1*/StartCoroutine(ExampleCoroutine());
+        StartCoroutine(ExampleCoroutine());/*1*/
     }
 
     void IEnumerator ExampleCoroutine()
     {
-    /*2*/Debug.Log("Starting of ExampleCoroutine...");
+        Debug.Log("Starting of ExampleCoroutine...");/*2*/
         // WaitUntil is one of Unitys built in yield instruction
         // https://docs.unity3d.com/ScriptReference/WaitUntil.html
-  /*3,4*/yield return new WaitUntil(() => _isReady);
-    /*5*/Debug.Log("The coroutine is ready to continue");
-/*6*/}
+        yield return new WaitUntil(() => _isReady);/*3,4*/
+        Debug.Log("The coroutine is ready to continue");/*5*/
+    }/*6*/
 }
 ```
 The above script does the following:<br>
@@ -119,7 +118,7 @@ myEnumerator.MoveNext();
 ```
  Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield me the control back at the next `yield` statement or at the end of the method.
 
-&emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`.<br>
+&emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`. It's important to note here that yielding back the execution is not a blocking operation, and also the execution of the coroutines happens on the Main thread.<br>
 Let's inspect `WaitUntil` implementation<sup>[4]</sup>:
 ```C#
 // Unity C# reference source
@@ -149,7 +148,7 @@ It looks like it just passes the keepWaiting property. So in our case, the corou
 
 Note, that `keepWaiting` is returning `!m_Predicate()` rather then just `!m_Predicate()` because as we talked about this earlier `IEnumerator.MoveNext()` in this context means basically `Should_I_Still_Be_Suspended()` (or according to Unity `keepWaiting`) so just returning our `IsReady` boolean default false value would let the coroutine proceed with it's execution in the next frame rather then waiting for it to become true.
 
-<details>
+<details open>
     <summary><i><sub><sup>[2]</sup> There is an abstract class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. Because of this class also introduces a sometimes useless bool, and prevents inheriting another class we will rather just simply implement the `IEnumerator` interface. (Click on the arrow to view the class implementation [4])</sub></i></summary>
 
 ```c#
@@ -191,9 +190,9 @@ namespace UnityEngine
 
 ## <p align="center">Understanding Yield Instructions</p>
 
-Before diving 
-
 #### Execution pipeline of Yield Instructions
+
+Before diving into deeper to Yield Instructions let's see when the evaluation of the different yield instructions happens. The following picture will tell us 
 
 #### Writing Yield Instructions:
 - Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
@@ -214,11 +213,9 @@ Before diving
 
 <br>
 
-## <p align="center">Proposing Design patterns</p>
-<br>
-<br>
+## <p align="center">Design patterns using Coroutines</p>
 
-#### Threaded Coroutine
+## <p align="center">Threaded Coroutine</p>
 
 **Description:** 
 
