@@ -149,7 +149,7 @@ It looks like it just passes the keepWaiting property. So in our case, the corou
 Note, that `keepWaiting` is returning `!m_Predicate()` rather then just `!m_Predicate()` because as we talked about this earlier `IEnumerator.MoveNext()` in this context means basically `Should_I_Still_Be_Suspended()` (or according to Unity `keepWaiting`) so just returning our `IsReady` boolean default false value would let the coroutine proceed with it's execution in the next frame rather then waiting for it to become true.
 
 <details open>
-    <summary><i><sub><sup>[2]</sup> There is an abstract class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. Because of this class also introduces a sometimes useless bool, and prevents inheriting another class we will rather just simply implement the `IEnumerator` interface. (Click on the arrow to view the class implementation [4])</sub></i></summary>
+    <summary><sub><sup>[2]</sup> There is an abstract class named `CustomYieldInstruction` which basically just implements the IEnumerator interface so you can derive from it and make a custom yield instruction. Because of this class also introduces a sometimes useless bool, and prevents inheriting another class we will rather just simply implement the `IEnumerator` interface. (Click on the arrow to view the class implementation [4])</sub></summary>
 
 ```c#
 // Unity C# reference source
@@ -182,10 +182,10 @@ namespace UnityEngine
 ```
 </details>
 <br>
-<i><sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub></i>
+<sub><sup>[3]</sup> As of 2020 there are only three that inherits from `YieldInstruction`, namely `WaitForSeconds`, `WaitForEndOfFrame` and `WaitForFixedUpdate`. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub>
 <br>
 <br>
-<i><sub><sup>[4]</sup> Unitys C# code is Open Source since 2019 you can inspect it here: <a href="https://github.com/Unity-Technologies/UnityCsReference"> https://github.com/Unity-Technologies/UnityCsReference</a></sub></i>
+<sub><sup>[4]</sup> Unitys C# code is Open Source since 2019 you can inspect it here: <a href="https://github.com/Unity-Technologies/UnityCsReference"> https://github.com/Unity-Technologies/UnityCsReference</a></sub>
 
 
 ## <p align="center">Understanding Yield Instructions</p>
@@ -202,9 +202,48 @@ As you can see it is guaranteed that our coroutines will resume execution after 
 <sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
 #### Writing Yield Instructions:
-- Showing how to write custom yield instructions like WaitUntil, WaitWhile etc.<br>
-- Comparison between IEnumerator interface and Unitys CustomYieldIntructions IEnumerator interface wrapper class.<br>
-- Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
+
+- Showing how to write custom yield instructions like WaitUntil<br>
+
+As mentioned above it's easy to write a custom yield instruction, just implement the `IEnumerator` interface `MoveNext` method and `Current` property.
+This is how a custom WaitUntil looks like:
+```c#
+using System;
+using System.Collections;
+
+/// <summary>
+/// A custom yield instruction using IEnumerator
+/// </summary>
+public class CustomWaitUntil : IEnumerator
+{
+    /// <summary>
+    /// The predicate that will be evaluated every frame
+    /// </summary>
+    Func<bool> m_Predicate;
+
+    // This is processed after Unity's coroutine scheduler executes the MoveNext() method
+    public object Current { get { return null; } }
+
+    public CustomWaitUntil(Func<bool> predicate) { m_Predicate = predicate; }
+
+    // Comes from IEnumerator Interface, called by Unity in every frame after all Updates have been happened
+    public bool MoveNext()
+    {
+        return !m_Predicate();
+    }
+
+    // Comes from IEnumerator Interface, this is not processed by Unity
+    public void Reset() { throw new NotImplementedException(); }
+
+}
+```
+**Example:**
+Changes the cube color to red when using the built-in `WaitUntil` and changes the color to yellow when using our custom `WaitUntil`
+
+![](custom-yield-instruction-example.gif)
+
+
+Open the corresponding example found in the project to test the code for yourself you can even compare it to Unitys built-in `WaitUntil`
 
 #### Writing an advanced Yield Instruction:
 - Writing a custom advanced yield instructions using cached transforms

@@ -22,7 +22,7 @@ public class CustomWaitUntil : IEnumerator
         return !m_Predicate();
     }
 
-    // Comes from IEnumerator Interface
-    public void Reset() { }
+    // Comes from IEnumerator Interface, this is not processed by Unity
+    public void Reset() { throw new NotImplementedException(); }
 
 }

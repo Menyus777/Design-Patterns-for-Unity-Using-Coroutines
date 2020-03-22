@@ -288,7 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 482689661}
   m_Layer: 0
-  m_Name: 1st Example - UnitysCustom vs Custom yield instructions
+  m_Name: 1st Example - Writing a custom Yield Instruction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -561,7 +561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0433ab0d3194c67469bbfc107b93af76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToRedWithUnityYieldInstruction: 0
+  ToRedUnityYieldInstruction: 0
   ToYellowCustomYieldInstruction: 0
 --- !u!65 &983781208
 BoxCollider:
