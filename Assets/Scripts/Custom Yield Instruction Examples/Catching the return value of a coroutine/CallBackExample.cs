@@ -6,10 +6,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 /// <summary>
-/// Callback is a an elegant way for quite a lot of problems, however it hurts readibility a little bit and 
-/// more importantly delegates introduce one more indirection which might make them slower then calling a
-/// regular method, however first measure then optimize. Method call optimalization is a micro optimalization
-/// Solution: Dedicated coroutines for method calls
+/// Callback is a an elegant way for quite a lot of problems
 /// </summary>
 public class CallBackExample : MonoBehaviour
 {
