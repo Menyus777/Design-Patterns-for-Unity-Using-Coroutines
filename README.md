@@ -60,7 +60,11 @@ In Unity, Coroutines are a type of methods which can pause execution, save state
 <sub><sup>[1]</sup> Cooperative multitasking, also known as non-preemptive multitasking, is a style of computer multitasking in which the operating system never initiates a context switch from a running process to another process. Instead, processes voluntarily yield control periodically or when idle or logically blocked.</sub>
 
 #### What are Coroutines good for in Unity
-MISSING INFORMATION!
+
+- Cooperative multitasking
+- Distribute logic across multiple frames
+- Taking back execution more conveniently at specific game events
+- Get load of from Update methods
 
 #### Implementation of Coroutines in Unity<br>
 A good way of implementing coroutines in .Net is by using iterators.<br>
@@ -208,7 +212,7 @@ As you can see it is guaranteed that our coroutines will resume execution after 
 
 <sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
-#### Writing Yield Instructions:
+#### Writing Yield Instructions
 
 In this section we will write a custom yield instruction<br>
 
@@ -253,7 +257,7 @@ Changes the cube color to red when using the built-in `WaitUntil` and changes th
 
 Open the corresponding example found in the project to test the code for yourself you can even compare it to Unitys built-in `WaitUntil`
 
-#### Writing an advanced Yield Instruction:
+#### Writing an advanced Yield Instruction
 In this section we will write an advanced yield instruction that will monitor two `Transform` by caching it in a class scoped variable. The yield instruction will signal a yielded state till the two transforms are closer than 5 meters.
 
 We can easily make a yield instruction like this, we just need a constructor with two `Transform` parameter and an appropriate logic in our `MoveNext()` method.<br>
@@ -296,19 +300,30 @@ public class WaitUntilInRange : IEnumerator
 ```
 
 Let's see this in Action!
+In the following example the cube Game Object will turn to red when it gets closer than 5 meters to the green tower.
 
 ![WaitUntilInRange Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/wait-until-in-range-yield-instruction-example.gif)
 
 Open the corresponding example found in the project to test the code for yourself!
 
-#### The importance of caching Yield Instructions:
-- The importance of caching yield instructions. Say not to GC Spikes like this!<br>
-
+#### The importance of caching Yield Instructions
+In this section we will learn why we should catch yield instructions, so we can avoid GC spikes like this!<br>
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
+C# is a managed language thus it is using GarbageCollector (GC) to free up unused memory. In game development where methods are executed multiple times per second and efficient 
 
-#### Catching the return value of a Coroutine:
-- Showing how to return a value from a coroutine with using callbacks (another solution would be class scoped variables)
+#### Catching the return value of a Coroutine
+In this section we will learn how to catch the return value of a coroutine.
+
+In Unity as we spoke about it earlier Coroutines are implemented by using iterator methods.
+Iterators methods have some restriction that make our life harder.
+
+For example let's see the following example:
+```c#
+public IEnumerator GetBossCurrentPositionFromServer(){
+    string asd 
+}
+```
 
 <br>
 
