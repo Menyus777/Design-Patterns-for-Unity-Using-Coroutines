@@ -27,7 +27,8 @@
     <dd>
         <details open>
             <summary><a href="#about-coroutines"><b>About Coroutines</b></a></summary>
-            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines?</a><br>
+            &emsp; ⬥ <a href="#what-are-coroutines">What are Coroutines</a><br>
+            &emsp; ⬥ <a href="#what-are-coroutines-good-for-in-unity">What are Coroutines good for in Unity</a><br>
             &emsp; ⬥ <a href="#implementation-of-coroutines-in-unity">Implementation of Coroutines in Unity</a><br>
         </details>
         <details open>
@@ -51,12 +52,15 @@
 
 ## <p align="center">About Coroutines</p>
 
-#### What are Coroutines?<br>
+#### What are Coroutines<br>
 In general, Coroutines are computer program components that generalize subroutines for non-preemptive  multitasking<sup>[1]</sup>, by allowing execution to be suspended and resumed.<br>
 
 In Unity, Coroutines are a type of methods which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
 <sub><sup>[1]</sup> Cooperative multitasking, also known as non-preemptive multitasking, is a style of computer multitasking in which the operating system never initiates a context switch from a running process to another process. Instead, processes voluntarily yield control periodically or when idle or logically blocked.</sub>
+
+#### What are Coroutines good for in Unity
+MISSING INFORMATION!
 
 #### Implementation of Coroutines in Unity<br>
 A good way of implementing coroutines in .Net is by using iterators.<br>
@@ -121,7 +125,7 @@ myEnumerator.MoveNext();
 ```
  Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield me the control back at the next `yield` statement or at the end of the method.
 
-&emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`. It's important to note here that yielding back the execution is not a blocking operation, and also the execution of the coroutines happens on the Main thread.<br>
+&emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`. It's important to note here that yielding back the execution is not a blocking operation, and also the execution of coroutines happens on the Main thread.<br>
 Let's inspect `WaitUntil` implementation<sup>[4]</sup>:
 ```C#
 // Unity C# reference source
@@ -245,13 +249,57 @@ public class CustomWaitUntil : IEnumerator
 **Example:**
 Changes the cube color to red when using the built-in `WaitUntil` and changes the color to yellow when using our custom `WaitUntil`
 
-![](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/custom-yield-instruction-example.gif)
-
+![Custom WaitUntil Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/custom-yield-instruction-example.gif)
 
 Open the corresponding example found in the project to test the code for yourself you can even compare it to Unitys built-in `WaitUntil`
 
 #### Writing an advanced Yield Instruction:
-- Writing a custom advanced yield instructions using cached transforms
+In this section we will write an advanced yield instruction that will monitor two `Transform` by caching it in a class scoped variable. The yield instruction will signal a yielded state till the two transforms are closer than 5 meters.
+
+We can easily make a yield instruction like this, we just need a constructor with two `Transform` parameter and an appropriate logic in our `MoveNext()` method.<br>
+Let's see a possible implementation:
+```c#
+using System.Collections;
+using UnityEngine;
+
+/// <summary>
+/// Suspends the execution of the coroutine till the supplied transforms are further than 5 meters away
+/// </summary>
+public class WaitUntilInRange : IEnumerator
+{
+    // Transform is a class thus it is passed by reference so we can cache it
+    Transform _observer;
+    Transform _observed;
+
+    public WaitUntilInRange(Transform observer, Transform observed)
+    {
+        _observer = observer;
+        _observed = observed;
+    }
+
+    // Should I Still Be Suspended?
+    public bool MoveNext()
+    {
+        // Yes, the enemy is still out of range
+        if (Vector3.Distance(_observer.position, _observed.position) > 5.0f)
+            return true;
+        // No, the enemy is in range
+        else
+            return false;
+    }
+
+    public void Reset() { throw new System.NotSupportedException(); }
+
+    public object Current { get { return null; } }
+}
+
+```
+
+Let's see this in Action!
+
+![WaitUntilInRange Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/wait-until-in-range-yield-instruction-example.gif)
+
+Open the corresponding example found in the project to test the code for yourself!
 
 #### The importance of caching Yield Instructions:
 - The importance of caching yield instructions. Say not to GC Spikes like this!<br>

@@ -2,11 +2,11 @@
 using UnityEngine;
 
 /// <summary>
-/// Suspends the execution of the coroutine till the enemy is out of range
+/// Suspends the execution of the coroutine till the supplied transforms are further than 5 meters away
 /// </summary>
 public class WaitUntilInRange : IEnumerator
 {
-    // Transform is a class thus it is passed by reference so we can cache it easily here for some performance boost
+    // Transform is a class thus it is passed by reference so we can cache it
     Transform _observer;
     Transform _observed;
 
@@ -41,7 +41,7 @@ public class WaitUntilInRange : IEnumerator
     /// Comes from IEnumerator Interface "Sets the enumerator to its initial position,
     /// which is before the first element in the collection."
     /// </summary>
-    public void Reset() { }
+    public void Reset() { throw new System.NotSupportedException(); }
 
     /// <summary>
     /// This is processed after Unity's coroutine scheduler executes the MoveNext() method,
