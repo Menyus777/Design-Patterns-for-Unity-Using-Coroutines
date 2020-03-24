@@ -299,8 +299,9 @@ public class WaitUntilInRange : IEnumerator
 
 ```
 
-Let's see this in Action!
-In the following example the cube Game Object will turn to red when it gets closer than 5 meters to the green tower.
+Let's see this in Action!<br>
+**Example:**
+The cube Game Object will turn to red when it gets closer than 5 meters to the green tower.
 
 ![WaitUntilInRange Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/wait-until-in-range-yield-instruction-example.gif)
 
@@ -317,13 +318,17 @@ In this section we will learn how to catch the return value of a coroutine.
 
 In Unity as we spoke about it earlier Coroutines are implemented by using iterator methods.
 Iterators methods have some restriction that make our life harder.
+We can't use the ref/out/inf keywords inside their parameter list, and also we just can't wait for them to return a value.
+One way to retrieve or work with the value produced by a coroutine is to use callbacks, in async programming it is a common practice to use callbacks.
 
-For example let's see the following example:
-```c#
-public IEnumerator GetBossCurrentPositionFromServer(){
-    string asd 
-}
+**Example:** Asks the server to what color it should paint the cube gameobject, then after the server responds the function given to the coroutine will be executed aka the callback.
+```C#
+IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 ```
+![Callback Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/coroutine-callback-example.gif)
+
+
+
 
 <br>
 
