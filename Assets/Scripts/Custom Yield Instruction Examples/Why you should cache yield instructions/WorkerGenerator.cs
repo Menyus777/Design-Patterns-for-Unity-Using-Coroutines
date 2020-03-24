@@ -18,13 +18,13 @@ public class WorkerGenerator : MonoBehaviour
     {
         if (GenerateWorkers)
         {
-            StartCoroutine(CGenerateWorkers());
+            StartCoroutine(GenerateWorkersCoroutine());
         }
     }
 
     #region Coroutines
 
-    IEnumerator CGenerateWorkers()
+    IEnumerator GenerateWorkersCoroutine()
     {
         Vector3 startPos = OriginalWorker.transform.position;
         var parent = GameObject.Find("4th Example - Why you should cache yield instructions").transform;

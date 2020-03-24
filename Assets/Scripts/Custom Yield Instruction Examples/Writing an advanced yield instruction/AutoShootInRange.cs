@@ -19,12 +19,12 @@ public class AutoShootInRange : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(CShootIfEnemyInRange());
+        StartCoroutine(ShootIfEnemyInRangeCoroutine());
     }
 
     #region Coroutines
 
-    private IEnumerator CShootIfEnemyInRange()
+    private IEnumerator ShootIfEnemyInRangeCoroutine()
     {
         yield return _waitUntilEnemyInRange;
         GameObject.Find("Enemy").GetComponent<MeshRenderer>().material.color = Color.red;

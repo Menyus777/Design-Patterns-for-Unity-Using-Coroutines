@@ -9,12 +9,12 @@ public class Awaiters : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(CWaitTillTrue());
+        StartCoroutine(WaitTillTrueCoroutine());
     }
 
     #region Coroutines
 
-    IEnumerator CWaitTillTrue()
+    IEnumerator WaitTillTrueCoroutine()
     {
         while (true)
         {

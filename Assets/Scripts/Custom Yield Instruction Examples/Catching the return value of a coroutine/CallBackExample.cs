@@ -20,7 +20,7 @@ public class CallBackExample : MonoBehaviour
     {
         if (GetColor)
         {
-            StartCoroutine(CGetCubeColorFromServer(ChangeGameObjectColor));
+            StartCoroutine(GetCubeColorFromServerCoroutine(ChangeGameObjectColor));
             GetColor = false;
         }
     }
@@ -33,8 +33,8 @@ public class CallBackExample : MonoBehaviour
 
     #region Coroutines
 
-    // The coroutine which handles the return value, in a non blocking way
-    IEnumerator CGetCubeColorFromServer(Action<Color> callBackMethod)
+    // The coroutine which handles the return value
+    IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
     {
         float rand = Random.Range(0.0f, 1.0f);
         var colorTask = Task.Run(() => GetColorFromServer(rand));

@@ -18,15 +18,15 @@ public class ChangeMaterialColor : MonoBehaviour
         _waitUntil = new WaitUntil(() => ToRedUnityYieldInstruction);
         _customWaitUntil = new CustomWaitUntil(() => ToYellowCustomYieldInstruction);
 
-        StartCoroutine(CChangeColorWithUnitysYieldInstruction());
-        StartCoroutine(CChangeColorWithCustomYieldInstruction());
+        StartCoroutine(ChangeColorWithUnitysYieldInstructionCoroutine());
+        StartCoroutine(ChangeColorWithCustomYieldInstructionCoroutine());
     }
 
     #region Coroutines
     /// <summary>
     /// Sets the GameObject color to red using Unitys built-in WaitUntil Yield Instruction
     /// </summary>
-    private IEnumerator CChangeColorWithUnitysYieldInstruction()
+    private IEnumerator ChangeColorWithUnitysYieldInstructionCoroutine()
     {
         yield return _waitUntil;
         GetComponent<MeshRenderer>().material.color = Color.red;
@@ -35,7 +35,7 @@ public class ChangeMaterialColor : MonoBehaviour
     /// <summary>
     /// Sets the GameObject color to yellow using a Custom WaitUntil Yield Instruction
     /// </summary>
-    private IEnumerator CChangeColorWithCustomYieldInstruction()
+    private IEnumerator ChangeColorWithCustomYieldInstructionCoroutine()
     {
         yield return _customWaitUntil;
         GetComponent<MeshRenderer>().material.color = Color.yellow;
