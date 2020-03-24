@@ -250,7 +250,7 @@ public class CustomWaitUntil : IEnumerator
 
 }
 ```
-**Example:**
+**Example:**<br>
 Changes the cube color to red when using the built-in `WaitUntil` and changes the color to yellow when using our custom `WaitUntil`
 
 ![Custom WaitUntil Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/custom-yield-instruction-example.gif)
@@ -300,7 +300,7 @@ public class WaitUntilInRange : IEnumerator
 ```
 
 Let's see this in Action!<br>
-**Example:**
+**Example:**<br>
 The cube Game Object will turn to red when it gets closer than 5 meters to the green tower.
 
 ![WaitUntilInRange Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/wait-until-in-range-yield-instruction-example.gif)
@@ -311,7 +311,25 @@ Open the corresponding example found in the project to test the code for yoursel
 In this section we will learn why we should catch yield instructions, so we can avoid GC spikes like this!<br>
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
-C# is a managed language thus it is using GarbageCollector (GC) to free up unused memory. In game development where methods are executed multiple times per second and efficient 
+C# is a managed language thus it is using GarbageCollector (GC) to free up unused memory. In game development where methods are executed multiple times per second and efficient memory management is crucial. YieldInstructions are classes thus they are created on the heap which is managed by the GC. Every usage of the new keyword creates a new instance of the YieldInstruction which will then need to be Garbage collected when all references to the class are out of scope.
+
+When you yield back a yield instruction be sure to use reusable instances of it whenever you can.
+
+Good practice
+```C#
+yield return _waitUntilPlayerDies;
+```
+Bad Practice
+```C#
+yield return new _waitUntilPlayerDies();
+```
+**Example:**<br>
+We will instantiate a lot of gameobjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
+Uncached<br>
+![Uncached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/uncached-yield-instruction-example.gif)
+
+Cached<br>
+![Cached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/cached-yield-instruction-example.gif)
 
 #### Catching the return value of a Coroutine
 In this section we will learn how to catch the return value of a coroutine.
@@ -321,7 +339,8 @@ Iterators methods have some restriction that make our life harder.
 We can't use the ref/out/inf keywords inside their parameter list, and also we just can't wait for them to return a value.
 One way to retrieve or work with the value produced by a coroutine is to use callbacks, in async programming it is a common practice to use callbacks.
 
-**Example:** Asks the server to what color it should paint the cube gameobject, then after the server responds the function given to the coroutine will be executed aka the callback.
+**Example:**<br>
+Asks the server to what color it should paint the cube gameobject, then after the server responds the function given to the coroutine will be executed aka the callback.
 ```C#
 IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 ```

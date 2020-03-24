@@ -31,9 +31,9 @@ public class WorkerGenerator : MonoBehaviour
         int id = 0;
         float instantioationBreak = 0.025f;
         bool finish = false;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
         {
-            for(int j = 0; j < 100; j++)
+            for(int j = 0; j < 50; j++)
             {
                 id++;
                 var gameObject = Instantiate(OriginalWorker, new Vector3(startPos.x - 0.5f - i * 2, startPos.y, startPos.z + 0.5f + j * 2), Quaternion.identity, parent);
