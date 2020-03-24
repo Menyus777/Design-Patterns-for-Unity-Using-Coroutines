@@ -325,10 +325,10 @@ yield return new _waitUntilPlayerDies();
 ```
 **Example:**<br>
 We will instantiate a lot of gameobjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
-Uncached<br>
+Uncached - 100-200 fps<br>
 ![Uncached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/uncached-yield-instruction-example.gif)
 
-Cached<br>
+Cached - 1000 fps<br>
 ![Cached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/cached-yield-instruction-example.gif)
 
 #### Catching the return value of a Coroutine
