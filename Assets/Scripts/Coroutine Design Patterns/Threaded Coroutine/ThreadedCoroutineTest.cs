@@ -13,9 +13,9 @@ public class ThreadedCoroutineTest: MonoBehaviour
 
     void Start()
     {
-        var threadedCoroutine1 = new ThreadStartsFirstThreadedCoroutineExample();
+        //var threadedCoroutine1 = new ThreadStartsFirstThreadedCoroutineExample();
         var threadedCoroutine2 = new CoroutineStartsFirstThreadedCoroutineExample();
         _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine2);
-        _threadedCoroutineManager.StartCoroutineThread(threadedCoroutine1, false, true);
+        //_threadedCoroutineManager.StartCoroutineThread(threadedCoroutine1, false, true);
     }
 }

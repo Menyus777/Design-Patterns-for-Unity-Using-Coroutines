@@ -413,6 +413,21 @@ To sum it up, this solution basically ping-pongs the controll of the execution b
 This is just one way of implementation of threaded coroutines. You could easily transform this code into another execution logic, by using delegates.
 For example rather than ping-ponging the control you could subscribe and unsunscribe methods than execute them on the correct thread. I choosed ping-pong tho because in my view it's easier to understand, however it's true that you can easily lost the yielding logic. So feel free to transfrom my code.
 
+<br>
+
+## <p align="center">Coroutine Manager</p>
+
+#### Description
+
+Starting coroutines is easy. You just call the method `StartCoroutine(coroutine)` from a `Monobehaviour` than all the yielding and scheduling is handled by Unity.
+But what if you need suspending and stopping too? A coroutine instance is bound to the intiating `Monobehaviour` thus suspension and termination is not that trivial. The reccommended way to stop a coroutine is to use the` StopCoroutine(coroutine)` method with one strict rule:<br>
+> Do not mix the three arguments. If a string is used as the argument in StartCoroutine, use the  string in StopCoroutine. Similarly, use the IEnumerator in both StartCoroutine and StopCoroutine. Finally, use StopCoroutine with the Coroutine used for creation.<br>
+(From the offical Unity API Documentation)
+
+I would like to extend these with another criteria `StartCoroutine(string name)` shall be avoided for performance reasons, so we are going to use the `IEnumerator` one so the above rule will be not be a problem too.
+
+
+
 
 <br>
 <br>
