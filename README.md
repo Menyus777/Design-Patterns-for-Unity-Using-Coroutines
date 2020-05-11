@@ -127,7 +127,7 @@ So a C# equivalent of `StartCoroutine()` would be something like this
 IEnumerator myEnumerator = myCoroutine();
 myEnumerator.MoveNext();
 ```
- Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield me the control back at the next `yield` statement or at the end of the method.
+ Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield the control back to Unity at the next `yield` statement or at the end of the method.
 
 &emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`. It's important to note here that yielding back the execution is not a blocking operation, and also the execution of coroutines happens on the Main thread.<br>
 Let's inspect `WaitUntil` implementation<sup>[4]</sup>:
@@ -325,10 +325,10 @@ yield return new _waitUntilPlayerDies();
 ```
 **Example:**<br>
 We will instantiate a lot of gameobjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
-Uncached<br>
+Uncached - 100-200 fps<br>
 ![Uncached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/uncached-yield-instruction-example.gif)
 
-Cached<br>
+Cached - 1000 fps<br>
 ![Cached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/cached-yield-instruction-example.gif)
 
 #### Catching the return value of a Coroutine
