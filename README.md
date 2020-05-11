@@ -40,8 +40,11 @@
             &emsp; ⬥ <a href="#catching-the-return-value-of-a-coroutine">Catching the return value of a Coroutine</a><br>
         </details>
         <details open>
-            <summary><a href="#design-patterns-using-coroutines"><b>Design patterns using Coroutines</b></a></summary>
-            &emsp; ⬥ <a href="#threaded-coroutine">Threaded Coroutine</a><br>
+            <summary><a href="#threaded-coroutine"><b>Threaded Coroutine</b></a></summary>
+            &emsp; ⬥ <a href="#description">Description</a><br>
+            &emsp; ⬥ <a href="#solution">Solution</a><br>
+            &emsp; ⬥ <a href="#ideas-from-other-design-patterns">Idead from other design patterns</a><br>
+            &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
         </details>
     </dd>
 </dl>
@@ -367,7 +370,7 @@ For this we will need the following:
 &emsp; <i>**b**</i>, &nbsp;Synchronization between the coroutine thread and the engine thread<br>
 &emsp; <i>**c**</i>, &nbsp;A way to properly cancel the coroutine thread to avoid undesired effects specifically when developing<br>
 
-#### The solution:
+#### Solution:
 
 <i>**a**</i>, A good way to handle paralell computation in C# is using `System.Threading.Tasks` rather than directly using `System.Threading.Thread`. Tasks by default run on the threadpool thus on a worker thread rather than on a separate thread. This is good in most cases but when you have a Task that will run for an extended duration of time, running that task on a threadpool thus on a worker thread is not a good idea. The reason is because threadpool shall rotate tasks quite often not just working on a task that will run for minutes thus blocking that worker thread out from the pool.<br>
 So we will need to provide a way for ThreadedCoroutines to allow this type of behaviour luckily we can tell the Task if it shall run on a threadpool or on a separate thread.
