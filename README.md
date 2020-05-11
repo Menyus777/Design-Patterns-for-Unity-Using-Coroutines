@@ -355,7 +355,56 @@ IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 
 ## <p align="center">Threaded Coroutine</p>
 
-**Description:** 
+#### Description:
+
+As we talked about this earlier coroutines do not run on a separate thread, they run on Unitys main thread and get scheduled for execution by Unitys internal coroutine scheduler.
+Because of this coroutines naturally are not a solution for paralell computation.<br>
+However fortunately we can still back them with threads and tasks.
+
+For this we will need the following:
+
+&emsp; <i>**a**</i>, &nbsp;A robust, fast and lightweight way to make threads<br>
+&emsp; <i>**b**</i>, &nbsp;Synchronization between the coroutine thread and the engine thread<br>
+&emsp; <i>**c**</i>, &nbsp;A way to properly cancel the coroutine thread to avoid undesired effects specifically when developing<br>
+
+#### The solution:
+
+<i>**a**</i>, A good way to handle paralell computation in C# is using `System.Threading.Tasks` rather than directly using `System.Threading.Thread`. Tasks by default run on the threadpool thus on a worker thread rather than on a separate thread. This is good in most cases but when you have a Task that will run for an extended duration of time, running that task on a threadpool thus on a worker thread is not a good idea. The reason is because threadpool shall rotate tasks quite often not just working on a task that will run for minutes thus blocking that worker thread out from the pool.<br>
+So we will need to provide a way for ThreadedCoroutines to allow this type of behaviour luckily we can tell the Task if it shall run on a threadpool or on a separate thread.
+
+<i>**b**</i>, We need to handle the synchronization between the coroutine thread and the engine thread, because of the nature of game engines and their mechanic that they work in a loop called the engine or game loop, the best way to synchronize is when the coroutine scheduler schedules our coroutine. If our backing thread is ready with it's job we continue executing if not we are just simply yielding back.
+
+<i>**c**</i>, Tasks can be easily cancelled with a lightweight token called CancellationToken we will use this to abort the execution of our ThreadedCoroutine.
+
+#### Ideas from other design patterns:
+
+The mediator design pattern:<br>
+The class `ThreadedCoroutine` will basically behave as a mediator, the engine can only interract with the task and the underlying coroutine via this class.
+
+The factory design pattern:<br>
+The class `ThreadedCoroutineManager` will basically make the ThreadedCoroutines rather than you just create them via their constructor.
+
+Scheduler design pattern:<br>
+The locking logic of the threaded coroutine (kinda a week comaprison tho)
+
+#### How does it work?
+
+You derive from the class named `TheadedCoroutine` than override the methods named `WorkOnUnityThread` and `WorkOnCoroutineThread(CancellationToken cancellationToken)`.
+You basically Ping-Pong between these methods, when you need a backing thread you yield to the `WorkOnCoroutineThread()` method  and when you need the main engine thread you yield to the `WorkOnUnityThread()` method.
+
+`WorkOnUnityThread`:<br>
+This is a traditional coroutine, you can execute any logic here that you would normally execute in a coroutine, plus you have access to all the Unity APIs that are not thread safe.
+Whenever you need the backing thread, just yield the method named `RequestThreadedCoroutineThread()` (eg.: `yield return RequestThreadedCoroutineThread();`) after this execution will resume in the `WorkOnCoroutineThread(CancellationToken cancellationToken)` method where it left off (or in the begining if it's the first call to it).
+
+`WorkOnCoroutineThread(CancellationToken cancellationToken)`:<br>
+This is the method that contains the logic that shall be executed paralell to the engine thread, altough you do not have access to all of the Unity APIs here!
+Whenever you need the main thread for syncronization or for any reason just use the method `RequestUnitysMainThread(CancellationToken cancellationToken)` this will yield control to the engine loop and execution will resume in the traditional coroutine method called `WorkOnUnityThread`.
+
+You shall only start ThreadedCoroutines via the class named `ThreadedCoroutineManager` because the engine needs to corectly schedule these coroutines to the scheduler for execution thus this class must derive from a `Monobehaviour`.
+
+To sum it up, this solution basically ping-pongs the controll of the execution between the engine thread and the backed thread, and by using coroutines we can do this in a state machine like manner.
+
+
 
 
 
