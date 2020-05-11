@@ -45,6 +45,7 @@
             &emsp; ⬥ <a href="#solution">Solution</a><br>
             &emsp; ⬥ <a href="#ideas-from-other-design-patterns">Idead from other design patterns</a><br>
             &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
+            &emsp; ⬥ <a href="#notes">Notes</a><br>
         </details>
     </dd>
 </dl>
@@ -358,7 +359,7 @@ IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 
 ## <p align="center">Threaded Coroutine</p>
 
-#### Description:
+#### Description
 
 As we talked about this earlier coroutines do not run on a separate thread, they run on Unitys main thread and get scheduled for execution by Unitys internal coroutine scheduler.
 Because of this coroutines naturally are not a solution for paralell computation.<br>
@@ -370,7 +371,7 @@ For this we will need the following:
 &emsp; <i>**b**</i>, &nbsp;Synchronization between the coroutine thread and the engine thread<br>
 &emsp; <i>**c**</i>, &nbsp;A way to properly cancel the coroutine thread to avoid undesired effects specifically when developing<br>
 
-#### Solution:
+#### Solution
 
 <i>**a**</i>, A good way to handle paralell computation in C# is using `System.Threading.Tasks` rather than directly using `System.Threading.Thread`. Tasks by default run on the threadpool thus on a worker thread rather than on a separate thread. This is good in most cases but when you have a Task that will run for an extended duration of time, running that task on a threadpool thus on a worker thread is not a good idea. The reason is because threadpool shall rotate tasks quite often not just working on a task that will run for minutes thus blocking that worker thread out from the pool.<br>
 So we will need to provide a way for ThreadedCoroutines to allow this type of behaviour luckily we can tell the Task if it shall run on a threadpool or on a separate thread.
@@ -379,7 +380,7 @@ So we will need to provide a way for ThreadedCoroutines to allow this type of be
 
 <i>**c**</i>, Tasks can be easily cancelled with a lightweight token called CancellationToken we will use this to abort the execution of our ThreadedCoroutine.
 
-#### Ideas from other design patterns:
+#### Ideas from other design patterns
 
 The mediator design pattern:<br>
 The class `ThreadedCoroutine` will basically behave as a mediator, the engine can only interract with the task and the underlying coroutine via this class.
@@ -407,8 +408,10 @@ You shall only start ThreadedCoroutines via the class named `ThreadedCoroutineMa
 
 To sum it up, this solution basically ping-pongs the controll of the execution between the engine thread and the backed thread, and by using coroutines we can do this in a state machine like manner.
 
+#### Notes
 
-
+This is just one way of implementation of threaded coroutines. You could easily transform this code into another execution logic, by using delegates.
+For example rather than ping-ponging the control you could subscribe and unsunscribe methods than execute them on the correct thread. I choosed ping-pong tho because in my view it's easier to understand, however it's true that you can easily lost the yielding logic. So feel free to transfrom my code.
 
 
 <br>
