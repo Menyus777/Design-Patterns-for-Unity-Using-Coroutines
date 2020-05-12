@@ -49,11 +49,11 @@
         </details>
         <details open>
             <summary><a href="#scheduled-coroutines-using-inner-monobehaviours"><b>Scheduled coroutines using inner Monobehaviours</b></a></summary>
-            &emsp; ⬥ <a href="#description">Description</a><br>
-            &emsp; ⬥ <a href="#solution">Solution</a><br>
+            &emsp; ⬥ <a href="#description-1">Description</a><br>
+            &emsp; ⬥ <a href="#solution-1">Solution</a><br>
             &emsp; ⬥ <a href="#implementation">Implementation</a><br>
-            &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
-            &emsp; ⬥ <a href="#notes">Notes</a><br>
+            &emsp; ⬥ <a href="#how-does-it-work-1">How does it work?</a><br>
+            &emsp; ⬥ <a href="#example">Example</a><br>
         </details>
     </dd>
 </dl>
@@ -475,7 +475,7 @@ public class InnerMonobehaviourDesignPattern : Input
 }
 ```
 
-#### How it works?
+#### How does it work?
 
 The static constructor will register the inner monobehaviour instance into Unitys engine loop, we properly hide this class with the `HideFlags` bit flags. From now on we have access to synchronization loops via this inner class.<br>
 We have access to:<br>
