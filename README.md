@@ -47,6 +47,14 @@
             &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
             &emsp; ⬥ <a href="#notes">Notes</a><br>
         </details>
+        <details open>
+            <summary><a href="#scheduled-coroutines-using-inner-monobehaviours"><b>Scheduled coroutines using inner Monobehaviours</b></a></summary>
+            &emsp; ⬥ <a href="#description">Description</a><br>
+            &emsp; ⬥ <a href="#solution">Solution</a><br>
+            &emsp; ⬥ <a href="#ideas-from-other-design-patterns">Idead from other design patterns</a><br>
+            &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
+            &emsp; ⬥ <a href="#notes">Notes</a><br>
+        </details>
     </dd>
 </dl>
 
@@ -408,6 +416,8 @@ You shall only start ThreadedCoroutines via the class named `ThreadedCoroutineMa
 
 To sum it up, this solution basically ping-pongs the controll of the execution between the engine thread and the backed thread, and by using coroutines we can do this in a state machine like manner.
 
+For the implementation details browse the code, every method and decision is well documented for education purposes.
+
 #### Notes
 
 This is just one way of implementation of threaded coroutines. You could easily transform this code into another execution logic, by using delegates.
@@ -415,17 +425,20 @@ For example rather than ping-ponging the control you could subscribe and unsunsc
 
 <br>
 
-## <p align="center">Coroutine Manager</p>
+## <p align="center">Scheduled coroutines using inner Monobehaviours</p>
 
 #### Description
 
-Starting coroutines is easy. You just call the method `StartCoroutine(coroutine)` from a `Monobehaviour` than all the yielding and scheduling is handled by Unity.
-But what if you need suspending and stopping too? A coroutine instance is bound to the intiating `Monobehaviour` thus suspension and termination is not that trivial. The reccommended way to stop a coroutine is to use the` StopCoroutine(coroutine)` method with one strict rule:<br>
-> Do not mix the three arguments. If a string is used as the argument in StartCoroutine, use the  string in StopCoroutine. Similarly, use the IEnumerator in both StartCoroutine and StopCoroutine. Finally, use StopCoroutine with the Coroutine used for creation.<br>
-(From the offical Unity API Documentation)
+Every experienced unity programmer knows that not every script should be derived from a Monobehaviour. Monobehaviours shall only be used when you would like to make a component.
+A good example to this is Input Handling. When you are not satisfied with Unitys built-in handler you would want to extend it. You can freely derive from the `Input` class:<br>
+```c#
+public sealed class TouchInputHandler : Input
+```
+But most of the time you will need syncronization or timing with in synch of Unitys game loop. How to achieve synchronization? How will you communicate with Unity?
 
-I would like to extend these with another criteria `StartCoroutine(string name)` shall be avoided for performance reasons, so we are going to use the `IEnumerator` one so the above rule will be not be a problem too.
+#### Solution
 
+An elegant and hidden solution is to use a private inner class that derives from a monobehaviour. This will hide the inner mechanism of our InputHandling, and also we can hide this from users in the inspector/hierarchy view. The Inputhandler will omit nothing just static values that you can read.
 
 
 
