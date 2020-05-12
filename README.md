@@ -51,7 +51,7 @@
             <summary><a href="#scheduled-coroutines-using-inner-monobehaviours"><b>Scheduled coroutines using inner Monobehaviours</b></a></summary>
             &emsp; ⬥ <a href="#description">Description</a><br>
             &emsp; ⬥ <a href="#solution">Solution</a><br>
-            &emsp; ⬥ <a href="#ideas-from-other-design-patterns">Idead from other design patterns</a><br>
+            &emsp; ⬥ <a href="#implementation">Implementation</a><br>
             &emsp; ⬥ <a href="#how-does-it-work">How does it work?</a><br>
             &emsp; ⬥ <a href="#notes">Notes</a><br>
         </details>
@@ -438,9 +438,157 @@ But most of the time you will need syncronization or timing with in synch of Uni
 
 #### Solution
 
-An elegant and hidden solution is to use a private inner class that derives from a monobehaviour. This will hide the inner mechanism of our InputHandling, and also we can hide this from users in the inspector/hierarchy view. The Inputhandler will omit nothing just static values that you can read.
+An good solution is to use a private inner class that derives from a monobehaviour. This will hide the inner mechanism of our InputHandling, and also we can hide this from users in the inspector/hierarchy view, so the art/level designers won't be confused. The Inputhandler will omit nothing just static values that our programmers can read.
 
+#### Implementation
 
+```c#
+/// <summary>
+/// A non monobehaviour class with access to Unitys engine loop, without any dependent monobehaviour
+/// </summary>
+public class InnerMonobehaviourDesignPattern : Input
+{
+    static InnerMonobehaviourDesignPattern()
+    {
+        // Creating a gameobject that will hold our "secret" component
+        var gameObject = new GameObject();
+        // Properly hiding it from other colleagues that shall not modify it
+        gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
+        // Adding the component
+        _innerMonoBehaviour = gameObject.AddComponent<InnerMonoBehaviour>();
+    }
+
+    /// <summary>
+    /// A static reference to our inner monobehaviour
+    /// </summary>
+    static InnerMonoBehaviour _innerMonoBehaviour;
+    /// <summary>
+    /// The hidden inner monobehaviour
+    /// </summary>
+    class InnerMonoBehaviour : MonoBehaviour 
+    {
+        void Awake()
+        {
+            hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
+        }
+    }
+}
+```
+
+#### How it works?
+
+The static constructor will register the inner monobehaviour instance into Unitys engine loop, we properly hide this class with the `HideFlags` bit flags. From now on we have access to synchronization loops via this inner class.<br>
+We have access to:<br>
+&emsp; <i>**-**</i> &nbsp;Unity messagess (Start, Awake, OnEnable, OnGui, Update etc...)<br>
+&emsp; <i>**-**</i> &nbsp;Unitys event system<br>
+&emsp; <i>**-**</i> &nbsp;Unitys coroutines<br>
+and many more...
+
+#### Example 
+
+An extended TouhInputHandler that allows convenient access to reading out double taps on an android phone.
+
+```c#
+using System.Collections;
+using UnityEngine;
+
+/// <summary>
+/// A non monobehaviour class with access to Unitys engine loop, without any outer monobehaviour
+/// </summary>
+public class TouchInputHandler : Input
+{
+    #region Double Tap
+
+    /// <summary>
+    /// Tells whether a double tap was registered.
+    /// </summary>
+    /// <remarks>Change the <see cref="DoubleTapTimeFrame"/> to set custom time frame for a double tap</remarks>
+    public static bool DoubleTap
+    {
+        get
+        {
+            if (CheckDoubleTap())
+                return true;
+            else
+                return false;
+        }
+    }
+    public static float DoubleTapTimeFrame { get; set; } = 0.35f;
+    public static Vector2 DoubleTapScreenPosition { get; private set; }
+
+    #region Helper variables & methods
+
+    static bool _tapped;
+    static Coroutine startTimerForDoubleTap;
+
+    static bool CheckDoubleTap()
+    {
+        if (_tapped && touchCount == 1 && GetTouch(0).phase == TouchPhase.Ended)
+        {
+            _innerMonoBehaviour.StopCoroutine(startTimerForDoubleTap);
+            _innerMonoBehaviour.StartCoroutine(SetDoubleClickedMouseButtonToFalse());
+            DoubleTapScreenPosition = GetTouch(0).position;
+            return true;
+        }
+        else if (touchCount == 1 && GetTouch(0).phase == TouchPhase.Ended)
+        {
+            startTimerForDoubleTap = CoroutineManager.StartCoroutine(StartTimerForDoubleTapCoroutine());
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    static IEnumerator StartTimerForDoubleTapCoroutine()
+    {
+        _tapped = true;
+        yield return new WaitForSeconds(DoubleTapTimeFrame);
+        _tapped = false;
+    }
+
+    static IEnumerator SetDoubleClickedMouseButtonToFalse()
+    {
+        yield return new WaitForEndOfFrame();
+        DoubleTapScreenPosition = Vector2.zero;
+        _tapped = false;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region InnerMonobehaviour Design Pattern
+
+    static TouchInputHandler()
+    {
+        // Creating a gameobject that will hold our "secret" component
+        var gameObject = new GameObject();
+        // Properly hiding it from other colleagues that shall not modify it
+        gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
+        // Adding the component
+        _innerMonoBehaviour = gameObject.AddComponent<InnerMonoBehaviour>();
+    }
+
+    /// <summary>
+    /// A static reference to our inner monobehaviour
+    /// </summary>
+    static InnerMonoBehaviour _innerMonoBehaviour;
+    /// <summary>
+    /// The hidden inner monobehaviour
+    /// </summary>
+    class InnerMonoBehaviour : MonoBehaviour
+    {
+        void Awake()
+        {
+            hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
+        }
+    }
+
+    #endregion
+}
+```
 
 <br>
 <br>
