@@ -423,6 +423,20 @@ For the implementation details browse the code, every method and decision is wel
 This is just one way of implementation of threaded coroutines. You could easily transform this code into another execution logic, by using delegates.
 For example rather than ping-ponging the control you could subscribe and unsunscribe methods than execute them on the correct thread. I choosed ping-pong tho because in my view it's easier to understand, however it's true that you can easily lost the yielding logic. So feel free to transfrom my code.
 
+For Example:
+```c#
+// You execute these function in a tight loop
+public Action ExecuteOnMainThread;
+public Action ExecuteOnCoroutineThread;
+.
+.
+.
+// Then from outside you just simply subscribe for these
+ExecuteOnMainThread += MyMethodToExecute();
+ExecuteOnMainThread -= MyMethodToNotExecuteAnymore();
+```
+
+
 <br>
 
 ## <p align="center">Scheduled coroutines using inner Monobehaviours</p>
