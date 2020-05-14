@@ -47,7 +47,7 @@ public class TouchInputHandler : Input
         }
         else if (touchCount == 1 && GetTouch(0).phase == TouchPhase.Ended)
         {
-            startTimerForDoubleTap = CoroutineManager.StartCoroutine(StartTimerForDoubleTapCoroutine());
+            startTimerForDoubleTap = _innerMonoBehaviour.StartCoroutine(StartTimerForDoubleTapCoroutine());
             return false;
         }
         else
