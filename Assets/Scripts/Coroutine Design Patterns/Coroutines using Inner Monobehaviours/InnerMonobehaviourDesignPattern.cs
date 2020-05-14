@@ -3,7 +3,7 @@
 /// <summary>
 /// A non monobehaviour class with access to Unitys engine loop, without any outer monobehaviour
 /// </summary>
-public class InnerMonobehaviourDesignPattern : Input
+public class InnerMonobehaviourDesignPattern
 {
     static InnerMonobehaviourDesignPattern()
     {

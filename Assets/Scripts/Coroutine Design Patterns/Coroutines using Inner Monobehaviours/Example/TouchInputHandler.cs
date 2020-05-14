@@ -22,7 +22,13 @@ public class TouchInputHandler : Input
                 return false;
         }
     }
+    /// <summary>
+    /// The time between two fast taps that counts as a double tap
+    /// </summary>
     public static float DoubleTapTimeFrame { get; set; } = 0.35f;
+    /// <summary>
+    /// The screen position of the double tap
+    /// </summary>
     public static Vector2 DoubleTapScreenPosition { get; private set; }
 
     #region Helper variables & methods
