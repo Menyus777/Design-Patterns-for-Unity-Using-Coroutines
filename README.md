@@ -399,6 +399,9 @@ The class `ThreadedCoroutineManager` will basically make the ThreadedCoroutines 
 Scheduler design pattern:<br>
 The locking logic of the threaded coroutine (kinda a week comaprison tho)
 
+Active Object design pattern:<br>
+The communication of the derived class and it's abstract base class might remind you of this design pattern.
+
 #### How does it work?
 
 You derive from the class named `TheadedCoroutine` than override the methods named `WorkOnUnityThread` and `WorkOnCoroutineThread(CancellationToken cancellationToken)`.
