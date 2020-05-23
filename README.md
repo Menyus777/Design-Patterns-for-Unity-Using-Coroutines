@@ -1,4 +1,4 @@
-# <p align="center">Proposing engine specific Design Patterns for Unity using Coroutines and the new Data-Oriented Technology Stack</p>
+# <p align="center">Proposing engine specific Design Patterns for Unity using Coroutines</p>
 
 <br>
 <br>
