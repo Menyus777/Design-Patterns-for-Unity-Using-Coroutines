@@ -390,6 +390,9 @@ So we will need to provide a way for ThreadedCoroutines to allow this type of be
 
 <i>**c**</i>, Tasks can be easily cancelled with a lightweight token called CancellationToken, we will use this to abort the execution of our ThreadedCoroutine.
 
+
+![GC Spike](imgs/Threaded%20Coroutine.png "Threaded coroutine")
+
 #### Ideas from other design patterns
 
 The mediator design pattern:<br>
