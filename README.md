@@ -2,9 +2,11 @@
 
 <br>
 <br>
-
-### <p align="center">Please Note that this is a work in progress repository!</p>
-
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 
@@ -67,7 +69,7 @@
 #### What are Coroutines<br>
 In general, Coroutines are computer program components that generalize subroutines for non-preemptive  multitasking<sup>[1]</sup>, by allowing execution to be suspended and resumed.<br>
 
-In Unity, Coroutines are a type of methods which can pause execution, save state, then yield controll back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
+In Unity, Coroutines are a type of methods which can pause execution, save state, then yield control back to Unitys game loop, so later in time (usually in the next frame) the coroutine can continue execution where it "left off".<br>
 
 <sub><sup>[1]</sup> Cooperative multitasking, also known as non-preemptive multitasking, is a style of computer multitasking in which the operating system never initiates a context switch from a running process to another process. Instead, processes voluntarily yield control periodically or when idle or logically blocked.</sub>
 
@@ -76,13 +78,13 @@ In Unity, Coroutines are a type of methods which can pause execution, save state
 - Cooperative multitasking
 - Distribute logic across multiple frames
 - Taking back execution more conveniently at specific game events
-- Get load of from Update methods
+- Make Update methods more lightweight
 
 #### Implementation of Coroutines in Unity<br>
 A good way of implementing coroutines in .Net is by using iterators.<br>
 Unity also used this concept when they implemented their own coroutines.<br>
 
-A coroutine yields an `IEnumerator` interface (this is the iterator), which will tell to Unitys Coroutine Scheduler when the execution shall continue.
+A coroutine yields an `IEnumerator` interface (this is the iterator), which will tell Unity's Coroutine Scheduler when the execution shall continue.
 Let's see an example:
 ```c#
 public class CoroutineExample : Monobehaviour
@@ -123,8 +125,8 @@ the yield instruction if it is done with waiting or not.<br>
 
 There are two types of Yield Instructions in Unity:
 
-&emsp; <i>**i**</i>, &nbsp;Yield Instructions that implements the interface `IEnumerator`<sup>[2]</sup><br>
-&emsp; <i>**ii**</i>, Yield Instructions that inherits from the class named `YieldInstruction`<sup>[3]</sup>
+&emsp; <i>**i**</i>, &nbsp;Yield Instruction that implements the interface `IEnumerator`<sup>[2]</sup><br>
+&emsp; <i>**ii**</i>, Yield Instruction that inherits from the class named `YieldInstruction`<sup>[3]</sup>
 
 We will only speak about the first type of Yield Instructions since we don't have insight into the second type. You can learn how to write your own Yield Instruction in the [Writing Yield Instructions](#writing-yield-instructions) section.
 
@@ -139,7 +141,7 @@ So a C# equivalent of `StartCoroutine()` would be something like this
 IEnumerator myEnumerator = myCoroutine();
 myEnumerator.MoveNext();
 ```
- Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool IEnumerator.Movenext()` method. So a Yield Instructions `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield the control back to Unity at the next `yield` statement or at the end of the method.
+ Its easy to see now that what the Coroutine Scheduler does is just simply calling the `bool Movenext()` method. So a Yield Instruction's `MoveNext()` method can be translated to `Should_I_Still_Be_Suspended()` where true means yes, you **shall not** proceed to the next `yield` statement please yield control back to Unity and false means no please proceed and yield the control back to Unity at the next `yield` statement or at the end of the method.
 
 &emsp;**3.** Yielding back happens here, with a Yield Instruction called `WaitUntil`. It's important to note here that yielding back the execution is not a blocking operation, and also the execution of coroutines happens on the Main thread.<br>
 Let's inspect `WaitUntil` implementation<sup>[4]</sup>:
@@ -205,7 +207,7 @@ namespace UnityEngine
 ```
 </details>
 <br>
-<sub><sup>[3]</sup> As of 2020 there are only three that inherits from <code>YieldInstruction</code>, namely <code>WaitForSeconds</code>, <code>WaitForEndOfFrame</code> and <code>WaitForFixedUpdate</code>. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub>
+<sub><sup>[3]</sup> As of 2020 there are only three classes that inherits from <code>YieldInstruction</code>, namely <code>WaitForSeconds</code>, <code>WaitForEndOfFrame</code> and <code>WaitForFixedUpdate</code>. All of these are pointing into Unitys Native code and we have no informations about their internal mechanism.</sub>
 <br>
 <br>
 <sub><sup>[4]</sup> Unitys C# code is Open Source since 2019 you can inspect it here: <a href="https://github.com/Unity-Technologies/UnityCsReference"> https://github.com/Unity-Technologies/UnityCsReference</a></sub>
@@ -218,9 +220,9 @@ namespace UnityEngine
 Before diving into deeper to Yield Instructions let's see when the evaluation of the different yield instructions happens. The following picture from the Unity Manual will help us understand it<sup>[5]</sup>:<br>
 
 ![Execution pipeline](imgs/Yield-execution-pipeline.jpg?raw=true "Execution pipeline")
-As you can see coroutines are executed after all Fixed and normal Updates haven taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame would happen.
+As you can see coroutines are executed after all Fixed and normal Updates have taken place, unless you used a `WaitForFixedUpdate` Yield instruction. There is a built-in Yield Instruction that is cropped from the image namely the `WaitForEndOfFrame` which happens after Unity has renderd every Camera and GUI and just before the displaying of the current frame would happen.
 
-As you can see it is guaranteed that our coroutines will resume execution after all Updates have been finished, but it's important to note that we have no guarantee that the order of execution of our coroutines will stay the same on the life cycle of our application. These are important to note things before writing custom yield instructions or designing architectures based on coroutines.
+As you can see it is guaranteed that our coroutines will resume execution after all Updates have been finished, but it's important to note that we have no guarantee that the order of execution of our coroutines will stay the same on the life cycle of our application. These are important to note before writing custom yield instructions or designing architectures based on coroutines.
 
 <sub><sup>[5]</sup> You can watch the uncropped picture here: <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html"> https://docs.unity3d.com/Manual/ExecutionOrder.html</a></sub>
 
@@ -228,7 +230,7 @@ As you can see it is guaranteed that our coroutines will resume execution after 
 
 In this section we will write a custom yield instruction<br>
 
-As mentioned above it's easy to write a custom yield instruction, just implement the `IEnumerator` interface `MoveNext` method and `Current` property.
+As mentioned above it's easy to write a custom yield instruction, just implement the `IEnumerator` interface's `MoveNext` method and `Current` property.
 You can write extremely complicated yield instructions just be sure to return an appropriate bool from your `MoveNext()` method. 
 
 This is how a custom WaitUntil looks like:
@@ -320,10 +322,10 @@ The cube Game Object will turn to red when it gets closer than 5 meters to the g
 Open the corresponding example found in the project to test the code for yourself!
 
 #### The importance of caching Yield Instructions
-In this section we will learn why we should catch yield instructions, so we can avoid GC spikes like this!<br>
+In this section we will learn why we should cache yield instructions, so we can avoid GC spikes like this!<br>
 ![GC Spike](imgs/GC_spikes_from_uncached_yield_instructions.JPG?raw=true "GC Spike")
 
-C# is a managed language thus it is using GarbageCollector (GC) to free up unused memory. In game development where methods are executed multiple times per second and efficient memory management is crucial. YieldInstructions are classes thus they are created on the heap which is managed by the GC. Every usage of the new keyword creates a new instance of the YieldInstruction which will then need to be Garbage collected when all references to the class are out of scope.
+C# is a managed language thus it is using GarbageCollector (GC) to free up unused memory. In game development where methods are executed multiple times per second efficient memory management is crucial. YieldInstructions are classes thus they are created on the heap which is managed by the GC. Every usage of the new keyword creates a new instance of the YieldInstruction which will then need to be Garbage collected when all references to the class are out of scope.
 
 When you yield back a yield instruction be sure to use reusable instances of it whenever you can.
 
@@ -336,7 +338,7 @@ Bad Practice
 yield return new _waitUntilPlayerDies();
 ```
 **Example:**<br>
-We will instantiate a lot of gameobjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
+We will instantiate a lot of GameObjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
 Uncached - 100-200 fps<br>
 ![Uncached Example](https://github.com/Menyus777/Design-Patterns-for-Unity-Using-Coroutines-and-DOTS/blob/master/imgs/uncached-yield-instruction-example.gif)
 
@@ -352,7 +354,7 @@ We can't use the ref/out/inf keywords inside their parameter list, and also we j
 One way to retrieve or work with the value produced by a coroutine is to use callbacks, in async programming it is a common practice to use callbacks.
 
 **Example:**<br>
-Asks the server to what color it should paint the cube gameobject, then after the server responds the function given to the coroutine will be executed aka the callback.
+Asks the server to what color it should paint the cube GameObject, then after the server responds the function given to the coroutine will be executed aka the callback.
 ```C#
 IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 ```
@@ -369,9 +371,9 @@ IEnumerator GetCubeColorFromServerCoroutine(Action<Color> callBackMethod)
 
 #### Description
 
-As we talked about this earlier coroutines do not run on a separate thread, they run on Unitys main thread and get scheduled for execution by Unitys internal coroutine scheduler.
-Because of this coroutines naturally are not a solution for paralell computation.<br>
-However fortunately we can still back them with threads and tasks.
+As we talked about this earlier coroutines do not run on a separate thread, they run on Unity's main thread and get scheduled for execution by Unity's internal coroutine scheduler.
+Because of this coroutines naturally are not a solution for parallel computation.<br>
+However, fortunately we can still back them with threads and tasks.
 
 For this we will need the following:
 
@@ -381,12 +383,12 @@ For this we will need the following:
 
 #### Solution
 
-<i>**a**</i>, A good way to handle paralell computation in C# is using `System.Threading.Tasks` rather than directly using `System.Threading.Thread`. Tasks by default run on the threadpool thus on a worker thread rather than on a separate thread. This is good in most cases but when you have a Task that will run for an extended duration of time, running that task on a threadpool thus on a worker thread is not a good idea. The reason is because threadpool shall rotate tasks quite often not just working on a task that will run for minutes thus blocking that worker thread out from the pool.<br>
-So we will need to provide a way for ThreadedCoroutines to allow this type of behaviour luckily we can tell the Task if it shall run on a threadpool or on a separate thread.
+<i>**a**</i>, A good way to handle parallel computation in C# is using `System.Threading.Tasks` rather than directly using `System.Threading.Thread`. Tasks by default run on the threadpool thus on a worker thread rather than on a separate thread. This is good in most cases but when you have a Task that will run for an extended duration of time, running that task on a threadpool thus on a worker thread is not a good idea. The reason is because threadpool shall rotate tasks quite often not just working on a task that will run for minutes thus blocking that worker thread out from the pool.<br>
+So we will need to provide a way for ThreadedCoroutines to allow this type of behaviour, luckily we can tell the Task if it shall run on a threadpool or on a separate thread.
 
 <i>**b**</i>, We need to handle the synchronization between the coroutine thread and the engine thread, because of the nature of game engines and their mechanic that they work in a loop called the engine or game loop, the best way to synchronize is when the coroutine scheduler schedules our coroutine. If our backing thread is ready with it's job we continue executing if not we are just simply yielding back.
 
-<i>**c**</i>, Tasks can be easily cancelled with a lightweight token called CancellationToken we will use this to abort the execution of our ThreadedCoroutine.
+<i>**c**</i>, Tasks can be easily cancelled with a lightweight token called CancellationToken, we will use this to abort the execution of our ThreadedCoroutine.
 
 #### Ideas from other design patterns
 
@@ -404,7 +406,7 @@ The communication of the derived class and it's abstract base class might remind
 
 #### How does it work?
 
-You derive from the class named `TheadedCoroutine` than override the methods named `WorkOnUnityThread` and `WorkOnCoroutineThread(CancellationToken cancellationToken)`.
+You derive from the class named `TheadedCoroutine` then override the methods named `WorkOnUnityThread` and `WorkOnCoroutineThread(CancellationToken cancellationToken)`.
 You basically Ping-Pong between these methods, when you need a backing thread you yield to the `WorkOnCoroutineThread()` method  and when you need the main engine thread you yield to the `WorkOnUnityThread()` method.
 
 `WorkOnUnityThread`:<br>
@@ -412,19 +414,19 @@ This is a traditional coroutine, you can execute any logic here that you would n
 Whenever you need the backing thread, just yield the method named `RequestThreadedCoroutineThread()` (eg.: `yield return RequestThreadedCoroutineThread();`) after this execution will resume in the `WorkOnCoroutineThread(CancellationToken cancellationToken)` method where it left off (or in the begining if it's the first call to it).
 
 `WorkOnCoroutineThread(CancellationToken cancellationToken)`:<br>
-This is the method that contains the logic that shall be executed paralell to the engine thread, altough you do not have access to all of the Unity APIs here!
+This is the method that contains the logic that shall be executed in parallel to the engine thread, altough you do not have access to all of the Unity APIs here!
 Whenever you need the main thread for syncronization or for any reason just use the method `RequestUnitysMainThread(CancellationToken cancellationToken)` this will yield control to the engine loop and execution will resume in the traditional coroutine method called `WorkOnUnityThread`.
 
 You shall only start ThreadedCoroutines via the class named `ThreadedCoroutineManager` because the engine needs to corectly schedule these coroutines to the scheduler for execution thus this class must derive from a `Monobehaviour`.
 
-To sum it up, this solution basically ping-pongs the controll of the execution between the engine thread and the backed thread, and by using coroutines we can do this in a state machine like manner.
+To sum it up, this solution basically ping-pongs the control of the execution between the engine thread and the backed thread, and by using coroutines we can do this in a state machine like manner.
 
 For the implementation details browse the code, every method and decision is well documented for education purposes.
 
 #### Notes
 
 This is just one way of implementation of threaded coroutines. You could easily transform this code into another execution logic, by using delegates.
-For example rather than ping-ponging the control you could subscribe and unsunscribe methods than execute them on the correct thread. I choosed ping-pong tho because in my view it's easier to understand, however it's true that you can easily lost the yielding logic. So feel free to transfrom my code.
+For example rather than ping-ponging the control you could subscribe and unsunscribe methods than execute them on the correct thread. I choose ping-pong though because in my view it's easier to understand, however it's true that you can easily loose the yielding logic. So feel free to transfrom my code.
 
 For Example:
 ```c#
@@ -455,7 +457,7 @@ But most of the time you will need syncronization or timing with in synch of Uni
 
 #### Solution
 
-An good solution is to use a private inner class that derives from a monobehaviour. This will hide the inner mechanism of our InputHandling, and also we can hide this from users in the inspector/hierarchy view, so the art/level designers won't be confused. The Inputhandler will omit nothing just static values that our programmers can read.
+A good solution is to use a private inner class that derives from a monobehaviour. This will hide the inner mechanism of our InputHandling, and also we can hide this from users in the inspector/hierarchy view, so the art/level designers won't be confused. The Inputhandler will give nothing just static values that our programmers can read.
 
 #### Implementation
 
@@ -467,7 +469,7 @@ public class InnerMonobehaviourDesignPattern : Input
 {
     static InnerMonobehaviourDesignPattern()
     {
-        // Creating a gameobject that will hold our "secret" component
+        // Creating a GameObject that will hold our "secret" component
         var gameObject = new GameObject();
         // Properly hiding it from other colleagues that shall not modify it
         gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
@@ -496,9 +498,9 @@ public class InnerMonobehaviourDesignPattern : Input
 
 The static constructor will register the inner monobehaviour instance into Unitys engine loop, we properly hide this class with the `HideFlags` bit flags. From now on we have access to synchronization loops via this inner class.<br>
 We have access to:<br>
-&emsp; <i>**-**</i> &nbsp;Unity messagess (Start, Awake, OnEnable, OnGui, Update etc...)<br>
-&emsp; <i>**-**</i> &nbsp;Unitys event system<br>
-&emsp; <i>**-**</i> &nbsp;Unitys coroutines<br>
+&emsp; <i>**-**</i> &nbsp;Unity messages (Start, Awake, OnEnable, OnGui, Update etc...)<br>
+&emsp; <i>**-**</i> &nbsp;Unity's event system<br>
+&emsp; <i>**-**</i> &nbsp;Unity's coroutines<br>
 and many more...
 
 #### Example 
@@ -580,7 +582,7 @@ public class TouchInputHandler : Input
 
     static TouchInputHandler()
     {
-        // Creating a gameobject that will hold our "secret" component
+        // Creating a GameObject that will hold our "secret" component
         var gameObject = new GameObject();
         // Properly hiding it from other colleagues that shall not modify it
         gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
