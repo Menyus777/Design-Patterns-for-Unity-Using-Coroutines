@@ -335,7 +335,7 @@ yield return _waitUntilPlayerDies;
 ```
 Bad Practice
 ```C#
-yield return new _waitUntilPlayerDies();
+yield return new WaitUntilPlayerDies();
 ```
 **Example:**<br>
 We will instantiate a lot of GameObjects each with an associated coroutine with uncached yield instruction then we will do the same with a cached solution then profile the two<br>
